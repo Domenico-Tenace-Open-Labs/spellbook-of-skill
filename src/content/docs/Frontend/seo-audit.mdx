@@ -1,0 +1,120 @@
+---
+title: SEO Audit
+description: Audit and fix on-page, technical, and content SEO directly in code — meta tags, headings, structured data, sitemap, robots, and internal linking.
+sidebar:
+  order: 3
+---
+
+## Description
+
+Finds and fixes SEO issues directly in code, treating SEO as both a marketing and engineering concern. It audits titles, meta, headings, structured data, sitemap/robots, internal linking, and copy quality — then edits the source.
+
+## Guide
+
+1. **Detect the stack** — identify the framework and how `<head>` and meta tags are set (SSR/SSG/CSR, Astro frontmatter, Next.js metadata, plain HTML, etc.), plus the routing/page structure.
+2. **Audit** across three areas:
+   - **On-page** — unique titles (~50–60 chars), unique meta descriptions (~120–155 chars), one `<h1>` per page with a logical heading hierarchy, descriptive image alt text, descriptive internal-link anchors, correct canonical tags, Open Graph / Twitter Card tags.
+   - **Technical** — `robots.txt` and `sitemap.xml` present and in sync, clean lowercase hyphen-separated URLs, JSON-LD structured data where relevant, 301 redirects for permanent moves, `hreflang` for multi-locale, and image `width`/`height`/lazy-loading to avoid CLS.
+   - **Content** — thin pages, primary keyword in title/h1/first paragraph, duplicate content, and readability.
+3. **Prioritize** by severity and effort — fix critical/high first (missing titles, missing h1, broken canonical, missing sitemap).
+4. **Apply fixes directly in code** — edit the actual source and match existing patterns; generate or update `sitemap.xml` and `robots.txt` when needed.
+5. **Report** — summarize files changed and remaining issues that need user input (brand facts, business decisions).
+
+## Example
+
+Auditing an Astro site:
+
+- **On-page**: the `/about` page has no `description` in frontmatter and a duplicate `<h1>` — add a unique description and reduce to one h1.
+- **Technical**: `robots.txt` points to a missing sitemap path — update it to the generated `sitemap-index.xml`.
+- **Structured data**: the homepage lacks `WebSite` JSON-LD — add a `WebSite` schema with name and URL.
+
+## Explanation
+
+### Key Concepts
+
+1. **Fix in code, not just a report** — descriptions alone don't rank; edit the source.
+2. **Three audit areas** — on-page, technical, and content.
+3. **Priority by impact** — critical metadata and sitemap issues before copy polish.
+4. **Toolchain-agnostic** — works with any framework by detecting where head tags are set.
+
+### Best Use Cases
+
+- Improving a site's search visibility
+- Fixing missing titles, descriptions, headings, or canonical tags
+- Setting up sitemap/robots and structured data
+- Reviewing pages before launch
+
+### Tips to Get the Best Results
+
+- Match existing patterns rather than introducing a new meta-tag library.
+- Keep brand voice when rewriting titles and copy.
+- Scope huge sites to the pages the user cares about.
+- Keep diffs minimal and targeted.
+## Ready-to-use skill
+
+Save the following as `SKILL.md` to use it as an OpenCode skill:
+
+````markdown
+---
+name: seo-audit
+description: Expert SEO/marketing engineer. Audits website codebase, directly edits code for SEO compliance (meta tags, headings, structured data, sitemap/robots, internal linking, copy quality). Trigger when user says "handle SEO", "review SEO", "SEO audit", "optimize SEO", or mentions "SEO" re codebase/website — even without explicit "fix"/"edit" request. Works any stack (React, Next.js, Vue, Angular, Astro, plain HTML, .NET, WordPress, etc.) by first detecting how project renders pages/head tags, then applying fixes.
+---
+
+# SEO Audit and Fix
+
+Act as senior SEO specialist + software engineer. Goal: find SEO issues in codebase and fix directly in code (not just report), incl. light copy rewrites where content thin or missing.
+
+## Workflow
+
+### 1. Detect the stack
+Before touching anything, identify:
+- Framework/rendering approach (SSR/SSG/CSR/static HTML/CMS)
+- Where `<head>`/meta tags set (e.g. Next.js `metadata`/`Head`, Vue `useHead`, Angular `Meta` service, Astro frontmatter, plain HTML `<head>`, server templates)
+- Routing/pages structure, to know page count and URLs
+
+### 2. Audit checklist
+Go through each item below per page/route. Note pass/fail and severity (critical/high/medium/low).
+
+**On-page**
+- `<title>`: unique, ~50-60 chars, primary keyword near start
+- Meta description: unique, ~120-155 chars, compelling, includes keyword
+- One `<h1>` per page; logical h2/h3 hierarchy (no skipped levels, no duplicate h1)
+- Images: descriptive `alt` text (empty `alt=""` only for decorative images)
+- Internal links: descriptive anchor text (no "click here"); no obvious orphan/dead-end pages
+- Canonical tag present and correct (esp. paginated/duplicate-content pages)
+- Open Graph / Twitter Card tags for shareable pages
+
+**Technical**
+- `robots.txt` exists, doesn't block pages it shouldn't, points to sitemap
+- `sitemap.xml` exists, valid, in sync with actual routes
+- URLs: lowercase, hyphen-separated, no unnecessary params/IDs, no trailing slash inconsistency
+- Structured data (JSON-LD via schema.org) where relevant: Organization, WebSite, BreadcrumbList, Article/Product/FAQ as applicable
+- Redirects: 301 (not 302) for permanent moves; no redirect chains
+- Language/hreflang tags if multi-locale
+- Perf smells hurting SEO: unoptimized/oversized images, missing lazy-loading, blocking render-critical resources, missing `width`/`height` on images (CLS)
+
+**Content**
+- Thin content pages (very little text, likely to rank poorly)
+- Keyword presence: primary keyword in title, h1, first paragraph, naturally in body (no stuffing)
+- Duplicate content across pages
+- Readability: overly long paragraphs/sentences for target audience
+
+### 3. Prioritize
+Rank findings by severity and effort. Fix critical/high first (missing titles/meta, missing h1, broken canonical, missing sitemap/robots). Batch quick low-effort/high-impact wins.
+
+### 4. Apply fixes directly in code
+For each fix:
+- Edit actual source file(s) — component, template, page, config, static file
+- Match project's existing patterns/conventions (don't add new meta-tag lib if one already used)
+- Rewriting copy (titles, descriptions, thin content): keep brand voice; ask user first only if need real product/brand facts
+- Generate/update `sitemap.xml` and `robots.txt` if missing or stale
+- Add JSON-LD structured data where relevant and correct for content type
+
+### 5. Report
+After edits, summarize: files changed, issue fixed, before/after snippet for key changes, remaining issues needing user input (missing brand facts, business decisions on redirects, etc.).
+
+## Notes
+- Always fix in code — don't just describe problem unless fix requires info only user has.
+- Huge codebase → scope to pages/routes user mentions, or highest-traffic/most important pages if known.
+- Prefer minimal, targeted diffs over restructuring unrelated code.
+````

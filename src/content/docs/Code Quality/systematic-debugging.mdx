@@ -1,0 +1,120 @@
+---
+title: Systematic Debugging
+description: Find the root cause of bugs, errors, and crashes with a repeatable process instead of trial-and-error.
+sidebar:
+  order: 2
+---
+
+## Description
+
+A disciplined approach to bug fixing that locates the actual root cause rather than masking the symptom. Use it for bugs, errors, crashes, unexpected behavior, or failing tests — not for writing new code.
+
+## Guide
+
+1. **Reproduce the problem before touching anything.** Find a minimal, reliable triggering case. For intermittent bugs, identify what differs between passing and failing runs (input, timing, prior state). If you can't reproduce it, you're guessing, not debugging.
+2. **Isolate the cause before proposing a fix.** Narrow it down by bisecting recent commits, adding targeted logging or breakpoints at key flow points, or shrinking the problem to a smaller standalone scenario. Never fix without a clear theory of why.
+3. **Separate the symptom from the cause.** A `null` crash downstream often means the real bug is upstream where the value was produced. Fix the source; if the real fix is too risky right now, ship a clearly-flagged temporary mitigation.
+4. **Verify the fix, not just the reproduced case.** Confirm the original case works, check nearby cases aren't broken, run the test suite, and add a regression test if none exists.
+5. **Explain what happened.** Report expected vs observed behavior, the actual root cause, why the fix addresses it, and any remaining risks.
+
+## Example
+
+A user reports an app crash "sometimes" when loading a dashboard.
+
+1. **Reproduce**: it happens after a failed API retry. Reduce it to a single request-then-retry case.
+2. **Isolate**: a log at the retry point shows a `null` response object being passed downstream.
+3. **Root cause**: the retry branch returns `null` instead of an empty result — the defect is in the retry logic, not the dashboard that crashed.
+4. **Fix**: correct the retry branch to return a valid empty result, then remove a defensive `if (response !== null)` guard left by a previous "quick fix".
+5. **Verify + explain**: original case passes, add a regression test, and document the cause.
+
+## Explanation
+
+### Key Concepts
+
+1. **Reproduce before you fix** — no reliable repro means guesswork.
+2. **Root cause over symptom** — patch the origin, not the crash site.
+3. **Cheap isolation** — bisection, targeted logging, and minimized repros beat reading the whole codebase.
+4. **Regression tests** — the durable proof the bug stays fixed.
+
+### Best Use Cases
+
+- Diagnosing crashes, errors, and unexpected behavior
+- Investigating failing or flaky tests
+- Reproducing intermittent "it breaks sometimes" reports
+- Root-cause analysis of production incidents
+
+### Tips to Get the Best Results
+
+- Don't trial-and-error edits hoping the error disappears.
+- Don't ignore warnings or side errors while investigating — they can point to the real cause.
+- Don't refactor while hunting a bug; isolate and fix first, refactor separately.
+- Don't mark it resolved just because the main test passes — check side effects too.
+## Ready-to-use skill
+
+Save the following as `SKILL.md` to use it as an OpenCode skill:
+
+````markdown
+---
+name: systematic-debugging
+description:
+  Root-cause analysis + bug fixing. Use when user reports bug, error, crash, unexpected behavior, failing test, or asks "debug", "fix this", "why is this happening", "investigate this issue".
+---
+
+# Instructions
+
+## When to use it
+
+Fixing bugs, errors, unexpected behavior, failing tests. Not for new code.
+
+## Why it matters
+
+Without guidance, agents default to: read stack trace, spot suspicious line, change, hope. Sometimes works. Often fixes symptom not cause, or adds new bug. This skill slows that reflex, follows experienced developer path.
+
+## The process
+
+### 1. Reproduce the problem before touching anything
+
+Can't reproduce reliably = guessing, not debugging. Find minimal triggering case. Intermittent: find what differs between passing/failing runs (input, timing, prior state).
+
+Vague report ("it breaks sometimes"): turn into reproducible case first, don't poke code randomly.
+
+### 2. Isolate the cause before proposing a fix
+
+Reproduced? Narrow it down:
+
+- **Bisection**: suspect recent change? Check git history, find which commit introduced bug.
+- **Targeted logging**: logs/breakpoints at key flow points, not everywhere. Find where state diverges from expected.
+- **Shrink the problem**: bug in complex flow? Isolate in simpler scenario (standalone script, minimal unit test).
+
+No fix without clear theory of why. "I changed this line and error went away" = luck, not explanation.
+
+### 3. Tell the symptom apart from the cause
+
+Before fixing, ask: fix cause or hide symptom? Classic: `null` crashes downstream. Adding `if (x !== null)` removes crash, but if `x` should never be `null` there, real bug is upstream where `x` is produced.
+
+Real cause too risky to fix now? Temporary mitigation OK, but flag clearly (code comment or PR note), don't pass off as final solution.
+
+### 4. Verify the fix, not just the case you reproduced
+
+After fix:
+- Confirm original case works.
+- Check nearby cases not broken (similar edge cases, alternate paths).
+- Run test suite if exists. No test covering this bug? Add one — best prevention against regression.
+
+### 5. Explain what happened
+
+When presenting fix, include:
+- Expected vs observed behavior.
+- Actual root cause (not just "I changed X").
+- Why fix addresses cause, not symptom.
+- Remaining risks or uncovered cases.
+
+Not bureaucracy — lets reviewer trust change without redoing investigation.
+
+## Things to avoid
+
+- Don't trial-and-error code changes hoping error disappears.
+- Don't ignore warnings/side errors during investigation — sometimes clue to real cause.
+- Don't mark resolved if main test passes but side effects unchecked.
+- Don't refactor while hunting bug. Isolate + fix first, refactor separately if needed.
+````

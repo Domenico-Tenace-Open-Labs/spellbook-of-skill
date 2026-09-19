@@ -5,7 +5,7 @@ import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  site: "https://domenico-tenace-open-labs.github.io/spellbook-of-skill/",
+  site: "https://spellbook-of-skill.netlify.app/",
   integrations: [
     starlight({
       title: "SpellBook of Skill",
@@ -19,7 +19,7 @@ export default defineConfig({
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/DomeT99/spellbook-of-skill",
+          href: "https://github.com/Domenico-Tenace-Open-Labs/spellbook-of-skill",
         },
       ],
       favicon: "/favicon.ico",

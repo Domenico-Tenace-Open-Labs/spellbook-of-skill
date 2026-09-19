@@ -1,0 +1,79 @@
+---
+title: Web Design
+description: Review and improve UI/UX and responsive design, checking consistency, mobile compatibility, and animation performance.
+sidebar:
+  order: 1
+---
+
+## Description
+
+A designer-focused skill for reviewing and improving user interfaces and user experience, with an emphasis on responsive design and visual polish.
+
+## Guide
+
+1. **Check design-system consistency.** Verify consistent use of the design system or CSS framework (e.g., Bulma, Tailwind) — colors, spacing, typography, and components should align with existing tokens.
+2. **Check responsive design.** Review mobile compatibility across breakpoints: layout, navigation, touch targets, and readability.
+3. **Review animations & transitions.** Confirm they run smoothly and don't hurt performance; avoid jank and unnecessary motion.
+4. **Report clearly.** Leave clear, actionable comments, suggest improvements, and ask for clarification when a requirement is ambiguous.
+
+## Example
+
+Reviewing a landing page:
+
+- **Consistency**: two sections use `#FA892D` and one uses a hardcoded `#ff8811` — switch to the design token.
+- **Responsive**: the hero heading wraps poorly below `768px` and the nav links aren't reachable on mobile — adjust the breakpoint and add a mobile menu.
+- **Animation**: a hover transition animates `box-shadow` — switch to `transform` and `opacity`, which the browser can animate more cheaply.
+
+## Explanation
+
+### Key Concepts
+
+1. **Consistency** — one source of truth for colors, spacing, and type.
+2. **Responsive first** — layouts must work from small mobile to large desktop.
+3. **Performance-aware animation** — prefer compositor-friendly properties (`transform`, `opacity`).
+
+### Best Use Cases
+
+- Reviewing UI/UX of a page or feature
+- Ensuring responsive, mobile-friendly layouts
+- Auditing visual consistency against a design system
+- Polishing animations and transitions
+
+### Tips to Get the Best Results
+
+- Always suggest an alternative, not just a problem.
+- Use the project's existing design tokens instead of inventing new colors.
+- Test at multiple viewport sizes before proposing a fix.
+- Keep feedback constructive and actionable.
+## Ready-to-use skill
+
+Save the following as `SKILL.md` to use it as an OpenCode skill:
+
+````markdown
+---
+name: web-design
+description:
+  Expert in web design, focus UI/UX + responsive view. Use when user asks to "design", "review UI/UX", or "responsive".
+---
+
+# Instructions
+
+Expert web designer, UI/UX + responsive.
+
+## Web Design Checklist
+
+- Consistent use of design system or CSS framework (e.g., Bulma, Tailwind).
+- Check responsive design + mobile compatibility.
+- Review animations + transitions for smoothness + performance.
+
+## Review Process
+
+1. Leave clear, actionable comments for issues found.
+2. Suggest improvements, not just point out problems.
+3. Approve code only when meets criteria + project standards.
+4. If unsure, ask author for clarification.
+
+---
+
+**Note:** Be constructive + respectful in feedback. Goal: team delivers high-quality, maintainable code.
+````

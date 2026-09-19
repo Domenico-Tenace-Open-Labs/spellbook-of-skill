@@ -1,0 +1,122 @@
+---
+title: Security Audit
+description: Scan a codebase for vulnerabilities, secrets, risky dependencies, and insecure configuration, then report findings ranked by severity.
+sidebar:
+  order: 3
+---
+
+## Description
+
+A systematic security review of a codebase that produces a concise, deduplicated, severity-ranked report. It covers source code, dependencies, committed secrets, and infrastructure-as-code.
+
+## Guide
+
+1. **Scope the target.** Determine what to scan (a given path, the current repo, or the whole repo) and detect the stack: languages, frameworks, package managers, and any Docker/Terraform/Kubernetes/CI configuration.
+2. **Scan in passes** across four categories:
+   - **Source code** — injection flaws, auth/session issues, unsafe deserialization, path traversal, SSRF, weak crypto, insecure error handling.
+   - **Secrets & hardcoded credentials** — API keys, passwords, tokens, private keys, connection strings in tracked files or committed `.env` files.
+   - **Dependencies** — parse manifests and lockfiles and flag known-vulnerable or abandoned versions. Verify CVEs via web search where possible; otherwise mark "needs CVE verification".
+   - **Config & IaC** — Dockerfiles, compose files, Terraform, Kubernetes manifests, CI/CD pipelines, and web-server configs for permissive access, exposed services, root containers, and plaintext secrets.
+3. **Deduplicate before reporting.** When the same root cause repeats across files, report it once as a single finding listing all affected locations.
+4. **Assign severity** using a consistent rubric (Critical / High / Medium / Low / Info).
+5. **Write the report** with a summary line and one section per non-empty severity level. Offer to fix the Critical and High findings, but don't generate a file unless asked.
+
+## Example
+
+Scanning a Node.js API repository might produce:
+
+> **Critical** — Hardcoded database credentials in `config/app.env` (committed). *Impact:* full database compromise. *Fix:* move to an environment variable and rotate the key.
+> **High** — SQL query built via string concatenation with user input in `src/users.ts:42`. *Impact:* SQL injection under auth. *Fix:* use parameterized queries.
+> **Medium** — `express` pinned to a version with a known CVE. *Impact:* requires specific input to exploit. *Fix:* upgrade and run `npm audit`.
+
+## Explanation
+
+### Key Concepts
+
+1. **Severity-ranked output** — Critical and High first so the worst risks are obvious.
+2. **Four scan categories** — code, secrets, dependencies, and config/IaC.
+3. **Deduplication** — one finding per root cause, listing every affected location.
+4. **Evidence over speculation** — no CVE claim without verification.
+
+### Best Use Cases
+
+- Auditing a codebase before release or handoff
+- Checking for exposed secrets and keys before going public
+- Reviewing Docker/Terraform/CI configuration for misconfigurations
+- Prioritizing remediation by actual risk
+
+### Tips to Get the Best Results
+
+- On large repos, prioritize entry points, auth code, user-input handlers, config, and manifests rather than reading every file.
+- Don't inflate or downplay severity — consistency makes the report trustworthy.
+- Identify the concrete fix and impact for every finding, not just a category.
+- Offer to remediate Critical/High findings rather than dumping a report and stopping.
+## Ready-to-use skill
+
+Save the following as `SKILL.md` to use it as an OpenCode skill:
+
+````markdown
+---
+name: security-audit
+description: Audits codebase for security vulns, misconfigs, cybersecurity risks: source code, deps, config files, IaC (Docker, Terraform, Kubernetes, CI/CD). Produces severity-ranked report (Critical/High/Medium/Low/Info) in chat. Trigger when user says "handle security", "review security", "security audit", "find vulnerabilities", "find security issues", "check for vulnerabilities", "cybersecurity review", "is this code secure", "pentest this", "check for secrets/exposed keys", or asks to scan/review/check repo/folder/file for security problems — even without word "security" (e.g. "can someone hack this", "any risks in this code"). Always use this skill instead of ad-hoc read-through.
+---
+
+# Security Audit
+
+Systematic security review of codebase. Covers source code, deps, config/secrets, infrastructure-as-code. Output: concise, deduplicated, severity-ranked report in chat — no file unless user asks.
+
+## Workflow
+
+1. **Scope target.** Find root path to scan (user-given path, or cwd/repo if unspecified — ask only if ambiguous, e.g. multiple unrelated repos). Detect stack: language(s), frameworks, package managers, Docker/Terraform/K8s/CI config.
+
+2. **Scan in passes**, using `references/checklist.md` for concrete patterns per category:
+   - **Source code** — injection flaws, auth/session issues, unsafe deserialization, path traversal, SSRF, weak crypto, insecure error handling.
+   - **Secrets & hardcoded credentials** — API keys, passwords, tokens, private keys, connection strings anywhere in tracked files (config, `.env` committed by mistake, code comments).
+   - **Dependencies** — parse manifest/lockfiles (`package.json`/`package-lock.json`, `requirements.txt`/`poetry.lock`, `*.csproj`/`packages.lock.json`, `go.mod`, `pom.xml`, etc). Flag known-vulnerable or abandoned/unpinned versions. Use web search for CVE lookups on suspect packages/versions if available; else flag as "needs CVE verification" not guessing.
+   - **Config & IaC** — Dockerfiles, docker-compose, Terraform, Kubernetes manifests, CI/CD pipelines, nginx/apache configs, cloud policy files. Look for permissive access, exposed ports/services, root containers, plaintext secrets, disabled TLS verification, wildcard permissions.
+
+3. **Deduplicate before reporting.** Same root cause repeats across files (e.g. one vulnerable dep in 12 places, same unsafe pattern copy-pasted) → report **once** as single finding listing all affected locations — never repeat explanation per occurrence. Hard requirement, not style.
+
+4. **Assign severity** using rubric below. Be consistent; don't inflate or downplay.
+
+5. **Write report** in chat following format below. Skip empty severity sections (omit, not "No findings"), except note total categories scanned at top.
+
+## Severity rubric
+
+| Severity | Criteria |
+|---|---|
+| **Critical** | Remotely exploitable, no auth, full compromise, data breach, or RCE (e.g. SQLi on unauthenticated endpoint, hardcoded prod credentials, exposed private key). |
+| **High** | Exploitable with some precondition (auth, local access, specific config), or high-impact (auth bypass, SSRF, unsafe deserialization, known-CVE dep with available exploit). |
+| **Medium** | Significant preconditions or user interaction (reflected XSS needing victim click, weak crypto not yet broken, missing rate limiting, verbose error leaking stack traces). |
+| **Low** | Defense-in-depth gaps, best-practice violations with limited real-world impact (missing security headers, outdated non-vulnerable dep, verbose logging). |
+| **Info** | Worth noting, not a vuln (missing `.gitignore` entries, no `SECURITY.md`, dep close to EOL). |
+
+## Report format
+
+```
+# Security Audit — <scope>
+
+Scanned: <n files/dirs>, categories: code / secrets / dependencies / config & IaC
+Findings: X Critical, Y High, Z Medium, W Low, V Info
+
+## Critical
+### <Short title>
+- **Where:** file:line (list all locations if repeated)
+- **Issue:** one or two sentences, no boilerplate
+- **Impact:** one sentence
+- **Fix:** concrete, actionable
+
+## High
+...
+```
+
+Keep each finding tight: 4 lines max unless genuinely complex. No repeated preambles on every item — say it once per finding. If category scanned with zero findings, don't list in body; summary line covers it.
+
+## When context is large
+
+Big repos: don't read every file verbatim into context. Prioritize: entry points (routes/controllers), auth code, anything handling user input, config/env files, IaC files, manifest/lockfiles. Use grep/search for known-risky patterns (see checklist) before deep-reading, then read only hits with surrounding context.
+
+## After the report
+
+Offer, don't push: "Want me to go deeper on any of these, or help fix the Critical/High ones first?" Don't generate a file unless asked.
+````

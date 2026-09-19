@@ -1,0 +1,57 @@
+---
+title: Code Review
+description: Review code for readability, best practices, testing, performance, and security, then suggest concrete, actionable improvements.
+sidebar:
+  order: 1
+---
+
+## Description
+
+Systematic review of a codebase or pull request to catch bugs, enforce conventions, and raise code quality before it ships. Covers six areas: readability and structure, best practices, testing, performance, security, and documentation.
+
+## Guide
+
+1. **Readability & Structure** — Check the code is easy to read and commented where it matters. Verify naming conventions, file organization, and that functions/components are small, focused, and reusable.
+2. **Best Practices** — Confirm modern language and framework conventions are followed, concerns (logic, presentation, data) are separated, and there is no unnecessary duplication.
+3. **Testing & Validation** — Verify critical logic is covered by tests, new features ship with relevant tests, and error handling and edge cases are addressed.
+4. **Performance & Optimization** — Look for unnecessary re-renders, expensive computations, and large bundle sizes. Suggest fixes for slow or inefficient code and check assets are optimized for the web.
+5. **Security** — Check common issues such as XSS, CSRF, and injection. Confirm sensitive data is not exposed in the frontend or committed to the repository.
+6. **Documentation** — Ensure new components, utilities, and APIs are documented and the README and related docs are up to date.
+
+When reporting, leave clear, actionable comments, suggest improvements rather than only pointing out problems, and ask the author for clarification when unsure.
+
+## Example
+
+You are asked to review a pull request that adds a new user profile form.
+
+Use the checklist:
+
+- **Readability**: the `ProfileForm` component is 300 lines — suggest splitting it into smaller focused components.
+- **Security**: the form echoes user input without escaping — flag potential XSS.
+- **Testing**: the new validation logic has no tests — request unit tests for the edge cases.
+- **Documentation**: a new API endpoint was added but not documented — ask for a doc update.
+
+Leave each finding as a concrete comment tied to a `file:line`, with a suggested fix.
+
+## Explanation
+
+### Key Concepts
+
+1. **Constructive feedback** — the goal is a better codebase, not fault-finding.
+2. **Checklist-driven** — six categories keep the review consistent and repeatable.
+3. **Actionable comments** — every issue points to a specific location and a concrete fix.
+4. **Approve only when standards are met** — no rubber-stamping.
+
+### Best Use Cases
+
+- Reviewing a pull request before merge
+- Auditing an existing codebase for quality issues
+- Preparing code for a release or handoff
+- Onboarding reviews for junior contributors
+
+### Tips to Get the Best Results
+
+- Point to the specific file and line, never vague "this looks wrong" notes.
+- Suggest an alternative implementation, not just a critique.
+- Prioritize issues that would cause bugs, security holes, or maintenance pain.
+- Keep the tone respectful — review the code, not the author.
