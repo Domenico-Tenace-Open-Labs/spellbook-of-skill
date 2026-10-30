@@ -1,6 +1,6 @@
 ---
 title: Website Analyzer
-description: Analyze a website from its URL — page structure, on-page SEO, tech stack, colors, fonts, and target audience — then produce a concise report with strengths, weaknesses, and concrete fixes.
+description: Analyze a website from its URL, page structure, on-page SEO, tech stack, colors, fonts, and target audience, then produce a concise report with strengths, weaknesses, and concrete fixes.
 sidebar:
   order: 4
 ---
@@ -11,12 +11,12 @@ Given a URL, produces a compact analysis in `docs/ANALYSIS.md` covering: structu
 
 ## Guide
 
-1. **Prepare the URL** — if the scheme is missing, add `https://`. If no link is given, ask for it.
-2. **Collect raw data with the script** — run `python3 <skill-path>/scripts/fetch_site.py <url>`. The script uses stdlib only and prints JSON with HTTP headers, home-page SEO (title, meta description, H1/H2, canonical, hreflang, Open Graph, JSON-LD, images without alt), internal links, robots.txt, sitemap, technology signals, most-used colors, CSS variables, and fonts. Use `--css-files N` to read more stylesheets (default 6). If the JSON contains an `"error"` key, the network is blocked from the shell: switch to WebFetch to read the pages and mark everything needing HTML source as "not verifiable".
-3. **Read the pages that matter** — with WebFetch, open the home page, then 3-4 pages from internal links (about, services/products, contact, blog/pricing). Look for the offer in one sentence, tone of voice, main CTAs, prices, language, market, and reviews/case studies. If a page is near-empty (`likely_client_rendered: true`), the site is client-rendered: say so, it affects SEO.
-4. **Interpret, don't just list** — rebuild the site map from `internal_paths` and the sitemap; check essential SEO elements; separate CMS, framework, CSS library, hosting/analytics/payments; derive the palette and fonts; infer the target audience from content, vocabulary, prices, and language. A tech from a single weak clue is "likely".
-5. **Strengths, weaknesses and fixes** — every point needs evidence, every weakness needs a fix. Weaknesses ordered by impact, each paired with one concrete fix adapted to the detected stack (WordPress → plugin/setting, Next.js → metadata/rendering option, Webflow → built-in setting), with effort and priority. Mark "to verify" anything depending on data you can't see from outside (traffic, conversions, real perf scores).
-6. **Write `docs/ANALYSIS.md`** — create the `docs/` folder if needed; if the file already exists, rename it to `docs/ANALYSIS.prev.md` first. Use the template in the skill, keep sections, drop rows with no data.
+1. **Prepare the URL**, if the scheme is missing, add `https://`. If no link is given, ask for it.
+2. **Collect raw data with the script**, run `python3 <skill-path>/scripts/fetch_site.py <url>`. The script uses stdlib only and prints JSON with HTTP headers, home-page SEO (title, meta description, H1/H2, canonical, hreflang, Open Graph, JSON-LD, images without alt), internal links, robots.txt, sitemap, technology signals, most-used colors, CSS variables, and fonts. Use `--css-files N` to read more stylesheets (default 6). If the JSON contains an `"error"` key, the network is blocked from the shell: switch to WebFetch to read the pages and mark everything needing HTML source as "not verifiable".
+3. **Read the pages that matter**, with WebFetch, open the home page, then 3-4 pages from internal links (about, services/products, contact, blog/pricing). Look for the offer in one sentence, tone of voice, main CTAs, prices, language, market, and reviews/case studies. If a page is near-empty (`likely_client_rendered: true`), the site is client-rendered: say so, it affects SEO.
+4. **Interpret, don't just list**, rebuild the site map from `internal_paths` and the sitemap; check essential SEO elements; separate CMS, framework, CSS library, hosting/analytics/payments; derive the palette and fonts; infer the target audience from content, vocabulary, prices, and language. A tech from a single weak clue is "likely".
+5. **Strengths, weaknesses and fixes**, every point needs evidence, every weakness needs a fix. Weaknesses ordered by impact, each paired with one concrete fix adapted to the detected stack (WordPress → plugin/setting, Next.js → metadata/rendering option, Webflow → built-in setting), with effort and priority. Mark "to verify" anything depending on data you can't see from outside (traffic, conversions, real perf scores).
+6. **Write `docs/ANALYSIS.md`**, create the `docs/` folder if needed; if the file already exists, rename it to `docs/ANALYSIS.prev.md` first. Use the template in the skill, keep sections, drop rows with no data.
 
 ## Example
 
@@ -25,16 +25,16 @@ Analyzing a small B2B software site:
 - **Run the script**: `python3 website-analyzer/scripts/fetch_site.py https://acme-analytics.com` → JSON with title, meta, H1/H2, internal paths (`/pricing`, `/about`, `/blog`), tech signals (`/_next/` → Next.js, utility classes → Tailwind), palette (dark surface `#1E1E2E`, accent `#FA892D`), and Inter from Google Fonts.
 - **Read pages**: home + `/pricing` + `/blog` → offer in one sentence ("usage-based analytics for SaaS teams"), tone technical and direct, main CTA "Start free trial", prices in USD, US market.
 - **Draw conclusions**: `body_text_len` shows real content and no `likely_client_rendered` → static/SSG baseline, good for SEO. Flag 3 of 12 images without alt; sitemap found via `/sitemap.xml`; `og:image` missing on product pages.
-- **Write the report**: `docs/ANALYSIS.md` with structure/SEO, technologies, visual design, audience, strengths, and two weaknesses with fixes (add image alt text — priority high, effort low; add Open Graph images — priority medium, effort low).
+- **Write the report**: `docs/ANALYSIS.md` with structure/SEO, technologies, visual design, audience, strengths, and two weaknesses with fixes (add image alt text, priority high, effort low; add Open Graph images, priority medium, effort low).
 
 ## Explanation
 
 ### Key Concepts
 
-1. **Analyze from the URL, not from code access** — the skill works on any site, even sites you don't own.
-2. **Script gives clues, you draw conclusions** — raw JSON is data; the skill's value is interpretation and concrete next steps.
-3. **Every weakness has a fix** — never list a problem without a solution, tailored to the detected stack.
-4. **Evidence over opinion** — every claim rests on something seen; whatever can't be known from outside is written as "not detectable".
+1. **Analyze from the URL, not from code access**, the skill works on any site, even sites you don't own.
+2. **Script gives clues, you draw conclusions**, raw JSON is data; the skill's value is interpretation and concrete next steps.
+3. **Every weakness has a fix**, never list a problem without a solution, tailored to the detected stack.
+4. **Evidence over opinion**, every claim rests on something seen; whatever can't be known from outside is written as "not detectable".
 
 ### Best Use Cases
 
@@ -212,7 +212,7 @@ When file ready, reply with two-three sentences: file path + most interesting fi
 
 ## Companion script
 
-Save the following as `scripts/fetch_site.py` — the skill runs it to collect raw site data (stdlib only, no dependencies):
+Save the following as `scripts/fetch_site.py`, the skill runs it to collect raw site data (stdlib only, no dependencies):
 
 ````python
 #!/usr/bin/env python3

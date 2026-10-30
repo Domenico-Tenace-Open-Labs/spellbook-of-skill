@@ -1,48 +1,48 @@
 ---
 title: Performance Optimizer
-description: Find and fix performance and code-quality issues — duplication, bundle size, unoptimized assets, slow runtime patterns, and dead code.
+description: Find and fix performance and code-quality issues, duplication, bundle size, unoptimized assets, slow runtime patterns, and dead code.
 sidebar:
   order: 4
 ---
 
 ## Description
 
-A two-phase workflow — **Analyze** then **Optimize** — that finds performance problems and code-quality issues, then applies behavior-preserving fixes directly to the codebase.
+A two-phase workflow, **Analyze** then **Optimize**, that finds performance problems and code-quality issues, then applies behavior-preserving fixes directly to the codebase.
 
 ## Guide
 
-**Phase 1 — Analyze.**
+**Phase 1: Analyze.**
 
 1. Map the project: language, framework, build tool, and package manager.
 2. Scan for these categories:
-   - **Duplication** — repeated logic or blocks across files.
-   - **Bundle size** — heavy or unused dependencies, missing tree-shaking or code-splitting, large barrel imports.
-   - **Images & assets** — uncompressed images, wrong format, oversized dimensions, missing lazy-loading.
-   - **Runtime performance** — N+1 queries, unnecessary re-renders, blocking sync I/O, unindexed queries, O(n²) loops on large data.
-   - **Dead code** — unused exports, unreachable branches, commented-out blocks.
-   - **Build config** — missing minification or compression, dev-only code shipped to production.
+   - **Duplication**, repeated logic or blocks across files.
+   - **Bundle size**, heavy or unused dependencies, missing tree-shaking or code-splitting, large barrel imports.
+   - **Images & assets**, uncompressed images, wrong format, oversized dimensions, missing lazy-loading.
+   - **Runtime performance**, N+1 queries, unnecessary re-renders, blocking sync I/O, unindexed queries, O(n²) loops on large data.
+   - **Dead code**, unused exports, unreachable branches, commented-out blocks.
+   - **Build config**, missing minification or compression, dev-only code shipped to production.
 3. Produce a concise report with `file:line`, what's wrong, estimated impact, and a proposed fix.
 4. Ask which categories to act on if the list is long.
 
-**Phase 2 — Optimize.** Apply fixes one category at a time, keeping changes reviewable. After each category, run the existing tests/build to confirm nothing broke, and report file-by-file what changed and why.
+**Phase 2: Optimize.** Apply fixes one category at a time, keeping changes reviewable. After each category, run the existing tests/build to confirm nothing broke, and report file-by-file what changed and why.
 
 ## Example
 
 Analyzing a React app:
 
-- **Bundle size**: a heavy date library imported for a single format call — replace it with a native `Intl.DateTimeFormat` call, cutting ~40 KB.
-- **Runtime**: a dashboard re-renders on every keystroke because of inline object props — memoize the child or lift the object.
-- **Images**: hero images are 4000×3000 PNGs — resize to display dimensions and convert to WebP.
-- **Dead code**: a module exports three functions with no references — remove after confirming with a repo-wide search.
+- **Bundle size**: a heavy date library imported for a single format call, replace it with a native `Intl.DateTimeFormat` call, cutting ~40 KB.
+- **Runtime**: a dashboard re-renders on every keystroke because of inline object props, memoize the child or lift the object.
+- **Images**: hero images are 4000×3000 PNGs, resize to display dimensions and convert to WebP.
+- **Dead code**: a module exports three functions with no references, remove after confirming with a repo-wide search.
 
 ## Explanation
 
 ### Key Concepts
 
-1. **Analyze before you touch** — findings are always shown first unless the user says "just fix it".
-2. **Behavior-preserving fixes** — never "optimize" into different output.
-3. **One category at a time** — keeps diffs small and reviewable.
-4. **No unnecessary dependencies** — use native or existing solutions when they work.
+1. **Analyze before you touch**, findings are always shown first unless the user says "just fix it".
+2. **Behavior-preserving fixes**, never "optimize" into different output.
+3. **One category at a time**, keeps diffs small and reviewable.
+4. **No unnecessary dependencies**, use native or existing solutions when they work.
 
 ### Best Use Cases
 
