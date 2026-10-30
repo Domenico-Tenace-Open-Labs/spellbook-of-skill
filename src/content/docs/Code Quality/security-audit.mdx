@@ -13,10 +13,10 @@ A systematic security review of a codebase that produces a concise, deduplicated
 
 1. **Scope the target.** Determine what to scan (a given path, the current repo, or the whole repo) and detect the stack: languages, frameworks, package managers, and any Docker/Terraform/Kubernetes/CI configuration.
 2. **Scan in passes** across four categories:
-   - **Source code** — injection flaws, auth/session issues, unsafe deserialization, path traversal, SSRF, weak crypto, insecure error handling.
-   - **Secrets & hardcoded credentials** — API keys, passwords, tokens, private keys, connection strings in tracked files or committed `.env` files.
-   - **Dependencies** — parse manifests and lockfiles and flag known-vulnerable or abandoned versions. Verify CVEs via web search where possible; otherwise mark "needs CVE verification".
-   - **Config & IaC** — Dockerfiles, compose files, Terraform, Kubernetes manifests, CI/CD pipelines, and web-server configs for permissive access, exposed services, root containers, and plaintext secrets.
+   - **Source code**, injection flaws, auth/session issues, unsafe deserialization, path traversal, SSRF, weak crypto, insecure error handling.
+   - **Secrets & hardcoded credentials**, API keys, passwords, tokens, private keys, connection strings in tracked files or committed `.env` files.
+   - **Dependencies**, parse manifests and lockfiles and flag known-vulnerable or abandoned versions. Verify CVEs via web search where possible; otherwise mark "needs CVE verification".
+   - **Config & IaC**, Dockerfiles, compose files, Terraform, Kubernetes manifests, CI/CD pipelines, and web-server configs for permissive access, exposed services, root containers, and plaintext secrets.
 3. **Deduplicate before reporting.** When the same root cause repeats across files, report it once as a single finding listing all affected locations.
 4. **Assign severity** using a consistent rubric (Critical / High / Medium / Low / Info).
 5. **Write the report** with a summary line and one section per non-empty severity level. Offer to fix the Critical and High findings, but don't generate a file unless asked.
@@ -25,18 +25,18 @@ A systematic security review of a codebase that produces a concise, deduplicated
 
 Scanning a Node.js API repository might produce:
 
-> **Critical** — Hardcoded database credentials in `config/app.env` (committed). *Impact:* full database compromise. *Fix:* move to an environment variable and rotate the key.
-> **High** — SQL query built via string concatenation with user input in `src/users.ts:42`. *Impact:* SQL injection under auth. *Fix:* use parameterized queries.
-> **Medium** — `express` pinned to a version with a known CVE. *Impact:* requires specific input to exploit. *Fix:* upgrade and run `npm audit`.
+> **Critical**, hardcoded database credentials in `config/app.env` (committed). *Impact:* full database compromise. *Fix:* move to an environment variable and rotate the key.
+> **High**, SQL query built via string concatenation with user input in `src/users.ts:42`. *Impact:* SQL injection under auth. *Fix:* use parameterized queries.
+> **Medium**, `express` pinned to a version with a known CVE. *Impact:* requires specific input to exploit. *Fix:* upgrade and run `npm audit`.
 
 ## Explanation
 
 ### Key Concepts
 
-1. **Severity-ranked output** — Critical and High first so the worst risks are obvious.
-2. **Four scan categories** — code, secrets, dependencies, and config/IaC.
-3. **Deduplication** — one finding per root cause, listing every affected location.
-4. **Evidence over speculation** — no CVE claim without verification.
+1. **Severity-ranked output**, Critical and High first so the worst risks are obvious.
+2. **Four scan categories**, code, secrets, dependencies, and config/IaC.
+3. **Deduplication**, one finding per root cause, listing every affected location.
+4. **Evidence over speculation**, no CVE claim without verification.
 
 ### Best Use Cases
 
@@ -48,7 +48,7 @@ Scanning a Node.js API repository might produce:
 ### Tips to Get the Best Results
 
 - On large repos, prioritize entry points, auth code, user-input handlers, config, and manifests rather than reading every file.
-- Don't inflate or downplay severity — consistency makes the report trustworthy.
+- Don't inflate or downplay severity, consistency makes the report trustworthy.
 - Identify the concrete fix and impact for every finding, not just a category.
 - Offer to remediate Critical/High findings rather than dumping a report and stopping.
 ## Ready-to-use skill

@@ -1,41 +1,41 @@
 ---
 title: SEO Audit
-description: Audit and fix on-page, technical, and content SEO directly in code — meta tags, headings, structured data, sitemap, robots, and internal linking.
+description: Audit and fix on-page, technical, and content SEO directly in code, meta tags, headings, structured data, sitemap, robots, and internal linking.
 sidebar:
   order: 3
 ---
 
 ## Description
 
-Finds and fixes SEO issues directly in code, treating SEO as both a marketing and engineering concern. It audits titles, meta, headings, structured data, sitemap/robots, internal linking, and copy quality — then edits the source.
+Finds and fixes SEO issues directly in code, treating SEO as both a marketing and engineering concern. It audits titles, meta, headings, structured data, sitemap/robots, internal linking, and copy quality, then edits the source.
 
 ## Guide
 
-1. **Detect the stack** — identify the framework and how `<head>` and meta tags are set (SSR/SSG/CSR, Astro frontmatter, Next.js metadata, plain HTML, etc.), plus the routing/page structure.
+1. **Detect the stack**, identify the framework and how `<head>` and meta tags are set (SSR/SSG/CSR, Astro frontmatter, Next.js metadata, plain HTML, etc.), plus the routing/page structure.
 2. **Audit** across three areas:
-   - **On-page** — unique titles (~50–60 chars), unique meta descriptions (~120–155 chars), one `<h1>` per page with a logical heading hierarchy, descriptive image alt text, descriptive internal-link anchors, correct canonical tags, Open Graph / Twitter Card tags.
-   - **Technical** — `robots.txt` and `sitemap.xml` present and in sync, clean lowercase hyphen-separated URLs, JSON-LD structured data where relevant, 301 redirects for permanent moves, `hreflang` for multi-locale, and image `width`/`height`/lazy-loading to avoid CLS.
-   - **Content** — thin pages, primary keyword in title/h1/first paragraph, duplicate content, and readability.
-3. **Prioritize** by severity and effort — fix critical/high first (missing titles, missing h1, broken canonical, missing sitemap).
-4. **Apply fixes directly in code** — edit the actual source and match existing patterns; generate or update `sitemap.xml` and `robots.txt` when needed.
-5. **Report** — summarize files changed and remaining issues that need user input (brand facts, business decisions).
+   - **On-page**, unique titles (~50–60 chars), unique meta descriptions (~120–155 chars), one `<h1>` per page with a logical heading hierarchy, descriptive image alt text, descriptive internal-link anchors, correct canonical tags, Open Graph / Twitter Card tags.
+   - **Technical**, `robots.txt` and `sitemap.xml` present and in sync, clean lowercase hyphen-separated URLs, JSON-LD structured data where relevant, 301 redirects for permanent moves, `hreflang` for multi-locale, and image `width`/`height`/lazy-loading to avoid CLS.
+   - **Content**, thin pages, primary keyword in title/h1/first paragraph, duplicate content, and readability.
+3. **Prioritize** by severity and effort, fix critical/high first (missing titles, missing h1, broken canonical, missing sitemap).
+4. **Apply fixes directly in code**, edit the actual source and match existing patterns; generate or update `sitemap.xml` and `robots.txt` when needed.
+5. **Report**, summarize files changed and remaining issues that need user input (brand facts, business decisions).
 
 ## Example
 
 Auditing an Astro site:
 
-- **On-page**: the `/about` page has no `description` in frontmatter and a duplicate `<h1>` — add a unique description and reduce to one h1.
-- **Technical**: `robots.txt` points to a missing sitemap path — update it to the generated `sitemap-index.xml`.
-- **Structured data**: the homepage lacks `WebSite` JSON-LD — add a `WebSite` schema with name and URL.
+- **On-page**: the `/about` page has no `description` in frontmatter and a duplicate `<h1>`, add a unique description and reduce to one h1.
+- **Technical**: `robots.txt` points to a missing sitemap path, update it to the generated `sitemap-index.xml`.
+- **Structured data**: the homepage lacks `WebSite` JSON-LD, add a `WebSite` schema with name and URL.
 
 ## Explanation
 
 ### Key Concepts
 
-1. **Fix in code, not just a report** — descriptions alone don't rank; edit the source.
-2. **Three audit areas** — on-page, technical, and content.
-3. **Priority by impact** — critical metadata and sitemap issues before copy polish.
-4. **Toolchain-agnostic** — works with any framework by detecting where head tags are set.
+1. **Fix in code, not just a report**, descriptions alone don't rank; edit the source.
+2. **Three audit areas**, on-page, technical, and content.
+3. **Priority by impact**, critical metadata and sitemap issues before copy polish.
+4. **Toolchain-agnostic**, works with any framework by detecting where head tags are set.
 
 ### Best Use Cases
 

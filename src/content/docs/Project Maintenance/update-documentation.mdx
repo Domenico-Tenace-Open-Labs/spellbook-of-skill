@@ -11,12 +11,12 @@ Keeps codebase documentation accurate, consistent, and aligned with the implemen
 
 ## Guide
 
-1. **Establish repository context** — inspect the repo structure, package/build manifests, existing docs, and contribution guidelines.
-2. **Understand the change** — map the request to concrete doc tasks and determine affected files.
-3. **Trace to the implementation** — verify documented behavior against actual code, config, scripts, and tests.
-4. **Search for drift** — look for renamed symbols, removed commands or options, outdated versions, stale paths, broken links, and examples that no longer match the API.
-5. **Edit minimally** — update only affected files, preserving voice, structure, and terminology.
-6. **Validate** — run doc builds or linting where available, and manually check links, code fences, commands, and examples.
+1. **Establish repository context**, inspect the repo structure, package/build manifests, existing docs, and contribution guidelines.
+2. **Understand the change**, map the request to concrete doc tasks and determine affected files.
+3. **Trace to the implementation**, verify documented behavior against actual code, config, scripts, and tests.
+4. **Search for drift**, look for renamed symbols, removed commands or options, outdated versions, stale paths, broken links, and examples that no longer match the API.
+5. **Edit minimally**, update only affected files, preserving voice, structure, and terminology.
+6. **Validate**, run doc builds or linting where available, and manually check links, code fences, commands, and examples.
 7. **Add a changelog entry** when the change affects users or consumers.
 
 ## Example
@@ -25,7 +25,7 @@ After renaming `getUser` to `getUserById` in the API:
 
 - Update the reference in `README.md` usage examples.
 - Update the docstring on `getUserById` in the source.
-- Add an "Unreleased — Changed" entry to `CHANGELOG.md` describing the rename.
+- Add an "Unreleased: Changed" entry to `CHANGELOG.md` describing the rename.
 
 Search globally for `getUser` to catch every stale reference before finishing.
 
@@ -33,10 +33,10 @@ Search globally for `getUser` to catch every stale reference before finishing.
 
 ### Key Concepts
 
-1. **Implementation is the source of truth** — document verified behavior, not guesses.
-2. **Focused changes** — no unrelated rewrites or formatting churn.
-3. **Preserve voice and structure** — match existing tone, headings, and terminology.
-4. **Verifiable examples** — commands and code must actually work.
+1. **Implementation is the source of truth**, document verified behavior, not guesses.
+2. **Focused changes**, no unrelated rewrites or formatting churn.
+3. **Preserve voice and structure**, match existing tone, headings, and terminology.
+4. **Verifiable examples**, commands and code must actually work.
 
 ### Best Use Cases
 

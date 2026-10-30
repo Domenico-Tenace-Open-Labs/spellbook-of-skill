@@ -11,7 +11,7 @@ A designer-focused skill for reviewing and improving user interfaces and user ex
 
 ## Guide
 
-1. **Check design-system consistency.** Verify consistent use of the design system or CSS framework (e.g., Bulma, Tailwind) — colors, spacing, typography, and components should align with existing tokens.
+1. **Check design-system consistency.** Verify consistent use of the design system or CSS framework (e.g., Bulma, Tailwind), colors, spacing, typography, and components should align with existing tokens.
 2. **Check responsive design.** Review mobile compatibility across breakpoints: layout, navigation, touch targets, and readability.
 3. **Review animations & transitions.** Confirm they run smoothly and don't hurt performance; avoid jank and unnecessary motion.
 4. **Report clearly.** Leave clear, actionable comments, suggest improvements, and ask for clarification when a requirement is ambiguous.
@@ -20,17 +20,17 @@ A designer-focused skill for reviewing and improving user interfaces and user ex
 
 Reviewing a landing page:
 
-- **Consistency**: two sections use `#FA892D` and one uses a hardcoded `#ff8811` — switch to the design token.
-- **Responsive**: the hero heading wraps poorly below `768px` and the nav links aren't reachable on mobile — adjust the breakpoint and add a mobile menu.
-- **Animation**: a hover transition animates `box-shadow` — switch to `transform` and `opacity`, which the browser can animate more cheaply.
+- **Consistency**: two sections use `#FA892D` and one uses a hardcoded `#ff8811`, switch to the design token.
+- **Responsive**: the hero heading wraps poorly below `768px` and the nav links aren't reachable on mobile, adjust the breakpoint and add a mobile menu.
+- **Animation**: a hover transition animates `box-shadow`, switch to `transform` and `opacity`, which the browser can animate more cheaply.
 
 ## Explanation
 
 ### Key Concepts
 
-1. **Consistency** — one source of truth for colors, spacing, and type.
-2. **Responsive first** — layouts must work from small mobile to large desktop.
-3. **Performance-aware animation** — prefer compositor-friendly properties (`transform`, `opacity`).
+1. **Consistency**, one source of truth for colors, spacing, and type.
+2. **Responsive first**, layouts must work from small mobile to large desktop.
+3. **Performance-aware animation**, prefer compositor-friendly properties (`transform`, `opacity`).
 
 ### Best Use Cases
 

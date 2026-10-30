@@ -1,6 +1,6 @@
 ---
 title: Frontend Accessibility
-description: Audit and improve frontend accessibility — semantic HTML, keyboard navigation, focus, forms, contrast, and screen-reader support.
+description: Audit and improve frontend accessibility, semantic HTML, keyboard navigation, focus, forms, contrast, and screen-reader support.
 sidebar:
   order: 2
 ---
@@ -11,33 +11,33 @@ Analyzes a frontend codebase for accessibility issues and implements fixes so in
 
 ## Guide
 
-1. **Establish context** — identify the framework, rendering model, component library, styling, routing, forms, and testing setup. Don't assume; discover first.
-2. **Map the UI** — list key journeys and surfaces (header, navigation, main content, forms, dialogs, tabs, tables, media, dynamic content).
+1. **Establish context**, identify the framework, rendering model, component library, styling, routing, forms, and testing setup. Don't assume; discover first.
+2. **Map the UI**, list key journeys and surfaces (header, navigation, main content, forms, dialogs, tabs, tables, media, dynamic content).
 3. **Perform a static review** across areas:
-   - **Semantics** — meaningful titles, heading hierarchy, landmarks, buttons vs links.
-   - **Keyboard** — everything operable without a pointer, no traps, logical focus order.
-   - **Focus** — visible indicators, focus management in dialogs, restoration on close.
-   - **Names, roles, states** — controls have accessible names and correct `aria-*` state.
-   - **Forms** — explicit labels, associations, error announcements.
-   - **Images** — appropriate alt text.
-   - **Color & contrast** — sufficient contrast, no color-only meaning.
-   - **Responsive & zoom** — usable at high zoom and narrow widths.
-   - **Motion & timing** — respect `prefers-reduced-motion`.
-   - **Dynamic content** — correct live-region announcements.
-   - **Tables & media** — correct semantics, captions, accessible controls.
-4. **Fix at the right layer** — repair shared components where it safely helps all consumers.
-5. **Add tests** where infrastructure exists — verify behavior, not just ARIA attributes.
-6. **Validate** — run tests, lint, and build, then manually check keyboard, zoom, and reduced motion.
-7. **Report honestly** — note what was checked and what still needs manual assistive-technology testing.
+   - **Semantics**, meaningful titles, heading hierarchy, landmarks, buttons vs links.
+   - **Keyboard**, everything operable without a pointer, no traps, logical focus order.
+   - **Focus**, visible indicators, focus management in dialogs, restoration on close.
+   - **Names, roles, states**, controls have accessible names and correct `aria-*` state.
+   - **Forms**, explicit labels, associations, error announcements.
+   - **Images**, appropriate alt text.
+   - **Color & contrast**, sufficient contrast, no color-only meaning.
+   - **Responsive & zoom**, usable at high zoom and narrow widths.
+   - **Motion & timing**, respect `prefers-reduced-motion`.
+   - **Dynamic content**, correct live-region announcements.
+   - **Tables & media**, correct semantics, captions, accessible controls.
+4. **Fix at the right layer**, repair shared components where it safely helps all consumers.
+5. **Add tests** where infrastructure exists, verify behavior, not just ARIA attributes.
+6. **Validate**, run tests, lint, and build, then manually check keyboard, zoom, and reduced motion.
+7. **Report honestly**, note what was checked and what still needs manual assistive-technology testing.
 
 ## Example
 
 Auditing an account menu:
 
-- **Markup**: a `<div onClick>` opens the menu — replace it with a real `<button>` and set `aria-expanded`.
-- **Focus**: the overlay doesn't focus the first item or trap focus — add focus management and restore focus on close.
-- **Keyboard**: `Escape` doesn't close it — add keyboard handling.
-- **Labels**: the close icon button has no accessible name — add `aria-label="Close"`.
+- **Markup**: a `<div onClick>` opens the menu, replace it with a real `<button>` and set `aria-expanded`.
+- **Focus**: the overlay doesn't focus the first item or trap focus, add focus management and restore focus on close.
+- **Keyboard**: `Escape` doesn't close it, add keyboard handling.
+- **Labels**: the close icon button has no accessible name, add `aria-label="Close"`.
 
 Report each finding with severity, location, user impact, and a concrete fix.
 
@@ -45,10 +45,10 @@ Report each finding with severity, location, user impact, and a concrete fix.
 
 ### Key Concepts
 
-1. **Native HTML before ARIA** — use `<button>`, semantics, and landmarks before adding ARIA.
-2. **Fix behavior, not just markup** — an element isn't accessible just because it has a role.
-3. **No automated-scan-only claims** — tools catch a subset; real assistive technology and manual testing are required.
-4. **Preserve functionality** — accessibility fixes must not break existing behavior.
+1. **Native HTML before ARIA**, use `<button>`, semantics, and landmarks before adding ARIA.
+2. **Fix behavior, not just markup**, an element isn't accessible just because it has a role.
+3. **No automated-scan-only claims**, tools catch a subset; real assistive technology and manual testing are required.
+4. **Preserve functionality**, accessibility fixes must not break existing behavior.
 
 ### Best Use Cases
 
@@ -61,7 +61,7 @@ Report each finding with severity, location, user impact, and a concrete fix.
 
 - Never remove focus outlines without an equally visible replacement.
 - Don't rely on color alone to convey meaning.
-- Keep changes focused — don't refactor unrelated code during a fix.
+- Keep changes focused, don't refactor unrelated code during a fix.
 - Be honest about limitations (for example, no screen reader available).
 ## Ready-to-use skill
 
