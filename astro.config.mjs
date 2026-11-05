@@ -19,7 +19,7 @@ export default defineConfig({
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/Domenico-Tenace-Open-Labs/spellbook-of-skill",
+          href: "https://github.com/DomeT99/spellbook-of-skill",
         },
       ],
       favicon: "/favicon.ico",

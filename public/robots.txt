@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://domenico-tenace-open-labs.github.io/spellbook-of-skill/sitemap-index.xml
+Sitemap: https://spellbook-of-skill.netlify.app/sitemap-index.xml

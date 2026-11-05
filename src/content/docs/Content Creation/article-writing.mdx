@@ -1,0 +1,396 @@
+---
+title: Article Writing
+description: Write publish-ready technical articles for dev.to, Substack, Hashnode and similar platforms, following a canonical article structure with platform templates and a quality checklist.
+sidebar:
+  order: 1
+---
+
+## Description
+
+A technical writing skill that turns a topic into a publish-ready article for dev.to, Substack, Hashnode, or a static blog. It's built on a canonical article skeleton plus platform-specific templates, and it ends with an independent editorial review before handover.
+
+## Guide
+
+1. **Clarify** — confirm topic and parameters first: audience and level, target platform(s), length, tone, keywords, CTA, deadline, and any repo or code to reference. Too vague or ambiguous, ask before writing.
+2. **Research** — when the topic needs current or verifiable facts (APIs, versions, comparisons, statistics, trends), launch the `article-researcher` subagent and wait for its brief. Skip only if everything is already verified and current.
+3. **Outline** — 2 to 6 core sections aligned with `article-structure.md`. Present the outline for large or unclear topics, otherwise draft directly.
+4. **Draft** — follow `article-structure.md` plus the template for the platform. Write in the user's language and tone.
+5. **Verify** — check every technical claim, code sample, package version and command against official docs; run code when feasible. Never invent APIs, flags, output, stats or quotes.
+6. **Self-review** — run the `quality-checklist.md` and fix critical and high findings before handover.
+7. **Editor pass** — launch the `article-editor` subagent for an independent review, relay findings and apply approved fixes.
+8. **Deliver** — write the final files and reply with a short summary in the user's language (file paths, word count, remaining choices). Don't reprint the article in chat.
+## Example
+
+Writing a post for dev.to about a project built end to end by an agent team:
+
+- **Clarify**: dev.to post, intermediate developers, ~1000 words, storytelling tone, CTA to read the repo.
+- **Research**: `article-researcher` confirms current package versions and the demo URL used in comparison points.
+- **Draft**: `templates/devto.md` provides frontmatter (title, description, up to 4 tags), the body uses the eight canonical sections from Overview to Final Thoughts.
+- **Verify**: every command in the quick-start block is checked against the real repo; shown output matches actual behavior.
+- **Deliver**: files land in `articles/<slug>/` with `article.md` (canonical) plus `devto.md`, and a short reply summarizes paths and word count.
+
+## Explanation
+
+### Key Concepts
+
+1. **Structure files win**, `article-structure.md` defines the skeleton and platform templates only adapt frontmatter and formatting.
+2. **Separate writing from verification**, never invent facts, every claim carries a source.
+3. **Independent editor pass**, self-review catches a lot, a second reviewer catches the rest.
+4. **Platform-aware output**, dev.to needs frontmatter and tags, Substack is rich text with no frontmatter.
+
+### Best Use Cases
+
+- Turning a real project or learning experience into a technical post.
+- Publishing cross-platform (dev.to, Substack, static blog) with one canonical source.
+- Content marketing for a developer brand or open-source project.
+
+### Tips to Get the Best Results
+
+- Keep the canonical `article.md` as the source of truth and derive platform variants from it.
+- Match the platform tone: emoji tolerated on dev.to, avoided on Substack.
+- Set `published: false` in dev.to frontmatter until the user actually publishes.
+
+## Ready-to-use skill
+
+Save the `SKILL.md` below plus the companion files into a skill directory to use it as an OpenCode skill:
+
+### SKILL.md
+
+````markdown
+---
+name: article-writing
+description: Technical article writer and editor for dev.to, Substack, Hashnode and similar platforms. Produces publish-ready articles from a topic, following a canonical article structure shipped as separate files (article-structure.md, templates/, quality-checklist.md) in this skill's base directory. Trigger when the user asks to write/generate/create an article, technical post, tutorial, guide, how-to, blog post — "write an article", "genera un articolo", "write a dev.to post", "articolo tecnico", "guida su".
+---
+
+# Article Writing
+
+Senior technical writer. Given topic, produce publish-ready technical article following canonical structure in this skill's **separate resource files**. Read them before drafting — they are source of truth, not this page alone.
+
+## Resource files (in this skill's base directory)
+
+| File | Purpose |
+|---|---|
+| `article-structure.md` | Canonical article skeleton: sections, order, content rules, length. **Read before any draft.** |
+| `quality-checklist.md` | Review checklist — self-review + `article-editor` subagent. |
+| `templates/generic.md` | Generic Markdown template, canonical format. |
+| `templates/devto.md` | dev.to variant: frontmatter keys, tags, formatting notes. |
+| `templates/substack.md` | Substack variant: title/subtitle workflow, no Markdown frontmatter. |
+
+## Workflow
+
+1. **Clarify** — confirm topic + params: audience/level, target platform(s), length, tone, keywords, CTA, deadline, repo/code to reference. Too vague/ambiguous → ask before writing.
+2. **Research** — when topic needs current/verifiable facts (APIs, versions, comparisons, statistics, ecosystem trends), launch `article-researcher` subagent, wait for brief. Skip only if topic already fully verified + current.
+3. **Outline** — 2–6 core sections aligned with `article-structure.md`. Present outline to user only for large/unclear topics; else draft directly.
+4. **Draft** — follow `article-structure.md` + template matching platform. Write in user's language + tone.
+5. **Verify** — check every technical claim, code sample, package version, command vs official docs (web allowed). Run code when feasible. Never invent APIs, flags, output, stats, quotes.
+6. **Self-review** — run against `quality-checklist.md`; fix critical/high findings before handover.
+7. **Editor pass** — launch `article-editor` subagent for independent review; relay findings, apply approved fixes.
+8. **Deliver** — write final files (below), reply short summary in user's language (file paths, word count, remaining choices). Don't reprint article in chat.
+
+## Deliverables
+
+Default output in current project:
+
+```
+articles/<slug>/
+├── article.md      # canonical generic Markdown — always written
+├── devto.md        # only when dev.to requested
+├── substack.md     # only when Substack requested
+└── research.md     # when the researcher ran: facts, sources, outline
+```
+
+`<slug>` = kebab-case, lowercase, hyphens, ASCII-only, derived from title. Ask before deviating from this layout.
+
+## Rules
+
+- **Structure files win.** `article-structure.md` defines skeleton; platform templates only adapt frontmatter + formatting.
+- Reply + write in user's language (default Italian for this config's owner; follow whatever user writes).
+- No fluff, no filler adjectives, no press-release tone. Colleague-over-coffee, concrete, clear.
+- Every *write*/*edit* asks approval (permission `ask`): propose file set + changes first.
+- Respect project-level `articles/.article-config` if present (platform defaults: tags, series, audience, tone).
+- Required fact unverifiable → say so + mark it — never fill gap with invented content.
+````
+
+### article-structure.md
+
+````markdown
+# Article Structure (canonical)
+
+The canonical skeleton for every technical article this writer produces, on any platform. Applies to all outputs; platform templates (`templates/*.md`) differ only in frontmatter + formatting, never in section logic. **Structure wins over template specifics.**
+
+Skeleton modelled on published reference corpus (all three outlets ran same post):
+
+- dev.to: *Astro Wellness: The First Project Built Start to Finish by My Agent Team*
+- Substack: the same post
+- generic (domenicotenace.dev/blog/astro-wellness-project/): the same post
+
+Target length: **800–1200 words** (≈5 min read). Adjust per platform/audience; prefer depth in few sections over many shallow ones.
+
+## Anatomy — named sections in order
+
+### 1. Metadata block (platform-specific; see templates)
+
+- **Title**: ≤ 60 chars, subject/name near start, outcome-driven ("Astro Wellness: The First Project Built Start to Finish by My Agent Team", not "An Article About Databases"). No clickbait. At most one emoji, only where platform/tone allows (dev.to yes, Substack no).
+- **Subtitle / dek / description**: one-sentence tease, ~100–160 chars. On Substack the subtitle under the title — mine the article's context, not a dry summary.
+- **Tags**: platform-valid (dev.to: max 4, lowercase, no spaces, no `#`).
+- **Cover image** + `alt`.
+- **Canonical URL** when cross-published; series name when part of one.
+
+### 2. Overview — the hook (≈120–200 words)
+
+- Open with context or question the article answers ("does it actually hold up on a real project?"), never history or award lists.
+- Reference prior work when it sets the stakes.
+- Within a few sentences: introduce subject (name + link) + headline outcome.
+- Close with transition like "Let's dive in!".
+- Prerequisites are **not** own section: state minimum requirement where used (inside Try It, Fork It, Break It).
+
+### 3. What Is <Subject>? (≈150–250 words)
+
+- One-line definition: what reader can adopt, use or learn.
+- Feature list as short bullets ("ships with everything you need to go live").
+- Closing paragraph: details that matter — look/tone, implementation specifics, license, demo link.
+
+### 4. How <It Was Built / the Team Worked> (≈200–350 words)
+
+- The process, not just result: working rule first ("nobody edits anything in the first pass"), then roles, gates, order of work.
+- One entry per actor/step: `**Name**` + paragraph on contribution + concrete trace it left (files, checks, decisions).
+
+### 5. What Worked (≈150–250 words)
+
+- 3–5 effects that proved out.
+- Each: `**Bold takeaway**` + 1–3 sentences why it worked, concrete evidence.
+
+### 6. What Was Harder (≈100–200 words)
+
+- 1–3 honest tradeoffs, costs, limitations.
+- No false modesty, no drama: what slower, pricier or still required judgment, and how handled.
+
+### 7. Try It, Fork It, Break It (≈100–200 words)
+
+- Small copy-paste block: install/run (`pnpm install`, `pnpm dev`) or the single config snippet that matters.
+- One line with hard requirements (versions, tools).
+- Numbered or bulleted adoption steps.
+- Demo/live link + contribution CTA (issues/PRs welcome).
+
+### 8. Final Thoughts (≈80–150 words)
+
+- 1–2 paragraphs: what journey proved, bigger takeaway beyond subject.
+- One natural CTA (follow / comment / subscribe / try it) — never pushy.
+- Optional short sign-off ("Happy coding!").
+
+## Content rules
+
+- **Separators**: separate named sections with `---` where platform renders horizontal rules (dev.to, generic Markdown). On Substack human re-applies divider style after pasting.
+- **Headings**: one `h1` (title), `h2` named sections, `h3` subsections. No skipped levels.
+- **Paragraphs**: one idea per paragraph, 2–4 lines. Short sentences.
+- **Code**: language-tagged fences; complete enough to run; usually < 40 lines. Prefer small, copy-pasteable snippets.
+- **Accuracy**: current stable versions, correct package names, commands, flags; shown output must match real behavior.
+- **No fabrication**: no invented APIs, versions, benchmarks, statistics, quotes. Facts carry a source.
+- **Examples**: realistic names; fake API keys/credentials explicitly marked fake; never real secrets.
+- **Images**: only when they add understanding (screenshots, before/after); always `alt` text.
+- **Tables** for comparisons when a list of bullets isn't enough.
+- **Voice**: first person for author's experience, second person when guiding reader ("you"). Active voice, concrete, no "simply", "just", "easy", filler adjectives.
+- **Links**: inline where relevant (repo, docs, demo, prior article); no separate bibliography section.
+- **SEO**: keyword in title, description, first paragraph, naturally in body — never stuffed.
+
+## Platform differences (summary)
+
+| Aspect | dev.to | Substack |
+|---|---|---|
+| Format | Markdown + YAML frontmatter | Rich text; no frontmatter, no tags |
+| Title/subtitle | Title + `description` meta | Title + subtitle line |
+| Tags | Yes, max 4 | No (uses Sections) |
+| Code | Rendered with syntax highlighting | Pasted as preformatted block; may need re-apply |
+| Emoji | Tasteful, ≤ 1 per heading | Avoid |
+
+See `templates/devto.md` and `templates/substack.md` for full details per platform.
+````
+
+### quality-checklist.md
+
+````markdown
+# Quality Checklist
+
+Self-review (primary agent) + independent review (`article-editor` subagent). Grade item **pass / fail**, with **severity: critical / high / medium / low** on failures. Rework until no critical or high items remain.
+
+## Structure
+
+- [ ] All named sections from `article-structure.md` present + in order (Overview → What Is → How → What Worked → What Was Harder → Try It, Fork It, Break It → Final Thoughts), or deliberately adapted with stated reason
+- [ ] One `h1`; `h2`/`h3` hierarchy; no skipped heading levels
+- [ ] Each section carries one idea; named sections separated by `---` where platform renders them
+- [ ] Requirements/versions stated in quick-start section (Try It), not separate prerequisites block
+
+## Technical accuracy
+
+- [ ] Claims verified vs official docs; versions current stable
+- [ ] Code samples run, or demonstrably correct; every code fence has language tag
+- [ ] No invented APIs, commands, flags, output, stats, quotes
+- [ ] No secrets, real credentials, unmasked keys in examples
+- [ ] Statistics + non-obvious facts carry working source link
+
+## Readability & voice
+
+- [ ] Overview states context + main outcome within first few sentences
+- [ ] Short paragraphs; active voice; no fluff, filler adjectives, press-release tone
+- [ ] Language/depth match stated audience/level; jargon explained where needed
+- [ ] Grammar + spelling clean in article's language
+
+## SEO & platform formatting
+
+- [ ] Title ≤ ~60 chars, keyword/name early, outcome-driven
+- [ ] Subtitle/meta description ~100–160 chars, includes keyword
+- [ ] Tags valid for target platform (dev.to: ≤ 4, lowercase, hyphenated multi-words accepted, no `#`)
+- [ ] Cover image reference + `alt` set where applicable
+- [ ] Frontmatter valid YAML (correct keys, no trailing whitespace, correct quoting)
+- [ ] Canonical URL + series set when cross-posting or in a series
+
+## Completeness
+
+- [ ] "What Is" closes with details that position subject (look/tone, license, demo link)
+- [ ] "What Was Harder" includes at least one honest tradeoff/limitation
+- [ ] "Try It, Fork It, Break It" has copy-paste block, requirements, adoption steps, contribution CTA
+- [ ] Final Thoughts present with one natural CTA
+- [ ] All links inline + reachable (no dead or invented URLs)
+- [ ] Article length appropriate (default 800–1200 words for ~5 min read)
+````
+
+### templates/generic.md
+
+````markdown
+<!-- Generic Markdown template — canonical article format, modelled on
+     published reference corpus (see article-structure.md §Anatomy).
+     Works for static blogs (Astro, Hugo), Hashnode, Medium, GitHub, any
+     Markdown host. Keep structure; remove comments; replace placeholders. -->
+
+# <Title — subject/name early, outcome-driven, ≤ 60 chars>
+
+<Subtitle / dek — one-sentence tease of what this article proves or shows>
+
+*Author: <name> · Published: <YYYY-MM-DD>*  <!-- optional: static-site metadata -->
+
+![<Cover alt>](/images/posts/<cover>.webp)  <!-- optional: cover image + alt -->
+
+## Overview
+
+<Open with context or the question this article answers. Reference prior work
+if it sets the stakes. Within a few sentences, introduce subject (name + link)
+and headline outcome. Close with "Let's dive in!"-style transition.>
+
+---
+
+## What Is <Subject>?
+
+<One-line definition: what reader can adopt or learn. Short feature bullets.
+Closing paragraph: look/tone, implementation specifics, license, demo link.>
+
+---
+
+## How <It Was Built / the Team Worked>
+
+<Working rule first, then one entry per actor/step:
+**<Actor>** — contribution + concrete trace it left.>
+
+---
+
+## What Worked
+
+<3–5 effects that proved out. Each:
+**<Bold takeaway>** — why it worked, concrete evidence.>
+
+---
+
+## What Was Harder
+
+<1–3 honest tradeoffs: what slower, pricier or still required judgment, and how
+handled.>
+
+---
+
+## Try It, Fork It, Break It
+
+```<language>
+<small copy-paste block: install/run, or single config snippet that matters>
+```
+
+<Requirements in one line (versions/tools). Numbered or bulleted adoption
+steps. Demo/live link + contribution CTA (issues/PRs welcome).>
+
+---
+
+## Final Thoughts
+
+<1–2 paragraphs: what journey proved, bigger takeaway. One natural CTA
+(follow / comment / subscribe / try it). Optional short sign-off.>
+````
+
+### templates/devto.md
+
+````markdown
+<!-- dev.to variant. Same named sections as article-structure.md / generic.md;
+     adds frontmatter + dev.to formatting rules.
+     Editor docs: https://dev.to/p/editor_guide -->
+---
+title: <Title — ≤ 60 chars for the card; dev.to allows up to 128>
+published: false
+# "true" only when user actually publishing right now.
+description: <80–160 chars, shown in feeds and cards. Include the keyword.>
+tags: <tag1> <tag2> <tag3> <tag4>
+# Max 4 tags, lowercase, no spaces, no "#". At least 1 required. Prefer pool
+# tags: ai, webdev, astro, javascript, typescript, tutorial, programming, ...
+cover_image: <https://… recommended ratio about 1000x420>
+# canonical_url: <https://… original URL when cross-posting; omit on dev.to first>
+# series: <series name> — unmute when part of a series
+---
+
+<Body — same named sections as generic template. dev.to-specific notes:>
+
+- Separators: separate named sections with `---`; dev.to renders horizontal
+  rules, auto-generated TOC built from `h2`/`h3`. Keep heading hierarchy clean
+  (frontmatter title is `h1`; body starts at `h2`).
+- Fenced code blocks render with syntax highlighting — always tag language.
+- Images: absolute URLs recommended over relative paths.
+- Emojis: tasteful, at most one per heading — 🏋️ in title, 👍/😬 in "What
+  Worked"/"What Was Harder", 🚀/🌟 in quick start / final thoughts.
+- AI-assisted content gets "AI-assisted" mark in dev.to editor (platform
+  toggle, not frontmatter key).
+- "Originally published at" + cross-post attribution come from
+  `canonical_url` — set when cross-posting.
+- `published: false` shows post to author only as draft — preview before real
+  publishing.
+- One gentle engagement nudge (dev.to "discussion" CTA) at end of Final
+  Thoughts section.
+````
+
+### templates/substack.md
+
+````markdown
+<!-- Substack variant. Substack = rich-text editor, NOT Markdown: no frontmatter,
+     no metadata block, inline Markdown not rendered.
+     Layout to produce: title, subtitle, body. Human pastes into editor.
+     Date + author added by Substack — do not type them. -->
+
+<Title — same rules as article-structure.md, ≤ 60 chars, outcome-driven. Becomes
+post title.>
+
+<Subtitle — one-sentence tease under title: context or promise of post, not
+description dump. Optional but recommended.>
+
+<Body — same named sections as article-structure.md. Substack-specific notes:>
+
+- Headings: plain h2 markers; human re-applies heading styles with editor
+  toolbar after pasting. Keep section names identical to canonical ones so
+  re-styling trivial.
+- Inline code `x` does not render: write inline in plain text ("run the npm
+  install command"), or put command in code block.
+- Code blocks: fenced block pastes as preformatted; Substack has dedicated
+  code-block tool — flag in handover that code needs manual re-wrap or paste as
+  plain text. Prefer smallest copy-pasteable snippets.
+- No emojis in headings; keep tone text-only.
+- Lists: plain numbered/bulleted lists carry over well; keep them plain.
+- Links: keep URLs as visible text; editor converts them.
+- Images: reference image path/URL; human uploads into Substack.
+- No tags — Substack uses Sections (newsletter/collection) for organization;
+  nothing to emit in article itself.
+- Title above the fold; make Subtitle earn the open, not a description dump.
+- CTA: subscribe / restack / comment in Final Thoughts.
+````

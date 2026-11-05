@@ -1,0 +1,110 @@
+---
+title: Bulma Expert
+description: Bulma CSS conventions, utility classes over overrides, customization via SASS/CSS variables, responsive helpers, and the columns layout system.
+sidebar:
+  order: 2
+---
+
+## Description
+
+A conventions skill for Bulma CSS. It tells you to use Bulma as intended (utility classes on markup), customize only through SASS/CSS variables, name custom classes in kebab-case with a project prefix, rely on Bulma responsive helpers, and build layouts with the columns system. Template-agnostic, it works with Astro, plain HTML, React or Vue markup.
+
+## Guide
+
+1. **Use Bulma as intended**, apply utility classes on markup, do not rewrite or override base components unless strictly necessary. Before writing custom CSS, check whether Bulma already covers it.
+2. **Customize via variables only**, no direct class overrides. Put overrides in one dedicated file (e.g. `styles/bulma-overrides.scss`) using a `@use "bulma/sass" with (...)` block, and never use `!important` to solve conflicts, fix the specificity upstream instead.
+3. **Add custom classes only where Bulma is genuinely insufficient**, name them in kebab-case (`.card-featured`) with a project prefix to avoid collisions (`.ag-card-featured`), and keep them in a separate file from Bulma, never mixed into the same block.
+4. **Prefer Bulma responsive helpers**, use `.is-hidden-mobile`, `.is-flex-desktop` and related helpers, and avoid custom media queries when Bulma covers the case. Document any truly required custom breakpoint next to the component or stylesheet that uses it.
+5. **Build layouts with columns**, use the `columns` plus `column` system as the layout backbone, avoid raw flexbox or grid when Bulma can do the job unless the design explicitly requires it.
+
+## Example
+
+Styling a feature card with the project prefix:
+
+- **Markup**, use Bulma classes on the card (`.card`, `.card-content`), no overriding.
+- **Theme**, set `$primary` and the base font in `styles/bulma-overrides.scss` so every component inherits them.
+- **Custom class**, only when a rounded hero variant has no Bulma equivalent, add `.ag-hero-rounded` in a project file.
+- **Responsive**, hide a sidebar button on mobile with `.is-hidden-mobile`, show it on desktop with `.is-inline-flex-desktop`.
+
+## Explanation
+
+### Key Concepts
+
+1. **Utility first**, Bulma classes do the work, custom CSS only when Bulma genuinely can't.
+2. **Configure, don't override**, SASS/CSS variables are the only approved customization path.
+3. **No specificity fights**, `!important` is banned, fix the source.
+4. **Framework layouts**, the columns system is the layout backbone.
+
+### Best Use Cases
+
+- Building responsive UI fast without fighting the framework.
+- Keeping a consistent, themeable design across a project.
+
+### Tips to Get the Best Results
+
+- Check Bulma's documentation before adding custom CSS.
+- Always prefix custom classes to avoid collisions with the framework or other libraries.
+- Reach for responsive helpers before writing media queries.
+
+## Ready-to-use skill
+
+Save the following as `SKILL.md`:
+````markdown
+---
+name: bulma-expert
+description: Bulma CSS conventions — utility classes over overrides, customization via SASS/CSS variables, responsive helpers, columns layout. Load when the project uses Bulma (bulma classes in markup or `bulma/sass` import).
+---
+
+# Bulma
+
+## Overview
+
+Global rules + conventions Bulma CSS. Template-agnostic: any markup (Astro, plain HTML, React, Vue, etc.). Pair with skill `astro-expert` when project uses Astro, no duplication.
+
+## Core Principle
+
+Use Bulma as intended: utility classes on markup, no rewriting/overriding base components unless strictly necessary. Before custom CSS, check Bulma covers it.
+
+## Customization
+
+Bulma customization **only via CSS/SASS variables**, never direct class overrides.
+
+Overrides in one dedicated file, path per project structure (e.g. `styles/bulma-overrides.scss`):
+
+```scss
+// styles/bulma-overrides.scss
+@use "bulma/sass" with (
+  $primary: #your-color,
+  $family-sans-serif: '"Your Font", sans-serif'
+);
+```
+
+No `!important` for conflicts — fix specificity upstream.
+
+## Custom Classes
+
+Bulma genuinely insufficient:
+
+- Naming **kebab-case**: `.card-featured`, `.hero-compact`
+- Project prefix avoid collisions: `.ag-card-featured` (`ag` = Antigravity)
+- Custom classes separate files from Bulma, never mixed same block
+
+## Responsive
+
+Bulma breakpoints + helpers default: use `.is-hidden-mobile`, `.is-flex-desktop`, etc. No custom media queries when Bulma covers case. Custom breakpoint truly required → document next to component/stylesheet using it.
+
+## Columns
+
+Bulma column system (`columns` + `column`) layout backbone. Use it. Avoid raw flexbox/grid when Bulma can do job — unless design explicitly requires.
+
+---
+
+## PR Checklist
+
+- [ ] No Bulma overrides via direct class rewrites
+- [ ] Customization via CSS/SASS variables
+- [ ] No `!important` for conflicts
+- [ ] Custom classes kebab-case, project-prefixed
+- [ ] Bulma helpers instead custom media queries where possible
+- [ ] Custom CSS dedicated files, not mixed Bulma blocks
+````

@@ -1,0 +1,157 @@
+---
+title: Astro Expert
+description: Astro project structure and component conventions, public/images vs src/assets, layouts, kebab-case pages, typed props, and components under 150 lines.
+sidebar:
+  order: 1
+---
+
+## Description
+
+A conventions skill for Astro projects. It defines the project structure, naming rules, component guidelines, typed props, slots, and a PR checklist so every page, layout and component follows one consistent shape. Styling-agnostic by design, pair it with the Bulma skill when the project uses Bulma.
+
+## Guide
+
+1. **Apply the project structure**, put static assets referenced by URL in `public/images/`, everything Vite must process (images imported in components, inline SVGs, fonts) in `src/assets/`.
+2. **Follow the naming rules**, PascalCase for component files (`HeroSection.astro`), kebab-case for pages (`about-us.astro`), PascalCase with the `Layout` suffix for layouts (`BaseLayout.astro`), kebab-case for data files.
+3. **Keep components small**, one job each, split anything over 150 lines.
+4. **Type all props** with TypeScript in frontmatter, no `any`, prefer `unknown` and narrow.
+5. **Order the frontmatter**, imports first, then props, then logic; move large logic blocks to a `.ts` file.
+6. **Use slots** for composed content, document non-obvious named slots.
+7. **Check the PR checklist** before handover, no leftover `console.log`, props typed, components split, assets in the right folder, README updated.
+
+## Example
+
+Building a page in an Astro project:
+
+- **Structure**, the hero image imported inside `HeroSection.astro` lives in `src/assets/` so Astro optimizes it; the favicon referenced in `<head>` stays in `public/images/`.
+- **Naming**, a new contact page is `src/pages/contact.astro`, its layout is `ContactLayout.astro`.
+- **Props**:
+```astro
+---
+interface Props {
+  title: string
+  description?: string
+  variant?: 'primary' | 'secondary'
+}
+
+const { title, description, variant = 'primary' } = Astro.props
+---
+```
+- **Split**, if a card list grows past 150 lines, break out `CardGrid.astro` plus a single `Card.astro`.
+
+## Explanation
+
+### Key Concepts
+
+1. **Separation by build role**, `public/` for URL-referenced assets, `src/assets/` for bundled ones.
+2. **Naming encodes intent**, PascalCase components, kebab-case pages, `Layout` suffix.
+3. **Small, typed components**, one job, explicit props, no `any`.
+4. **Clean frontmatter order**, imports, props, logic.
+
+### Best Use Cases
+
+- Starting or refactoring an Astro project with consistent conventions.
+- Introducing typed components and a readable project layout to a team.
+
+### Tips to Get the Best Results
+
+- Keep images that components reference in `src/assets/` so Astro optimizes them.
+- Split components before they reach the 150-line mark, not after.
+- Type unclear props as `unknown` and narrow, this keeps the contract honest.
+
+## Ready-to-use skill
+
+Save the following as `SKILL.md`:
+````markdown
+---
+name: astro-expert
+description: Astro project structure and component conventions — public/images vs src/assets, layouts, kebab-case pages, typed props, components < 150 lines. Load when the project uses Astro (astro.config.* or *.astro files present).
+---
+
+# Astro
+
+## Overview
+
+Global rules + conventions Astro projects. Styling-agnostic: pair with skill `bulma-expert` when project uses Bulma, no duplication.
+
+## Project Structure
+
+```
+project-root/
+├── public/
+│   └── images/          /* Statically served images */
+├── src/
+│   ├── assets/          /* Fonts, SVGs, images imported via bundle */
+│   ├── components/      /* Reusable Astro components */
+│   ├── data/            /* JSON/TS files with static data or mocks */
+│   ├── layouts/         /* Base layouts and page templates */
+│   └── pages/           /* Site pages and routes */
+├── package.json
+├── astro.config.mjs
+└── README.md
+```
+
+### Structure Rules
+
+**`public/images/`** — Only assets not going through bundler: images referenced directly by URL in markup/meta (`og:image`, favicon, etc.). Images inside Astro components go in `src/assets/`.
+
+**`src/assets/`** — Everything Vite must process: images imported in components, inline SVGs, local fonts. Astro optimizes images imported here.
+
+**`src/components/`** — Reusable `.astro` components. Page-specific components next to page or dedicated subfolder. As project grows, organize by domain (e.g. `components/nav/`, `components/cards/`).
+
+**`src/data/`** — Static data, content config, mocks: `.json`/`.ts` export arrays/objects for pages. No logic, just data.
+
+**`src/layouts/`** — Layouts wrap pages. At minimum `BaseLayout.astro` with `<head>`, metadata, base HTML. One layout per site section when needed (e.g. `BlogLayout.astro`, `LandingLayout.astro`).
+
+**`src/pages/`** — Site pages; folder structure maps to routes. No complex presentation logic: pages assemble layouts + components, don't define them.
+
+---
+
+## Conventions
+
+### Naming
+
+- Component files **PascalCase**: `HeroSection.astro`, `NavBar.astro`, `CardGrid.astro`
+- Page files **kebab-case**: `about-us.astro`, `contact.astro`
+- Layouts **PascalCase** with `Layout` suffix: `BaseLayout.astro`, `ArticleLayout.astro`
+- Files in `src/data/` **kebab-case**: `team-members.json`, `services.ts`
+
+### Components
+
+Each component one job. `.astro` over 150 lines = split.
+
+Props always typed TypeScript in frontmatter:
+
+```astro
+---
+interface Props {
+  title: string;
+  description?: string;
+  variant?: 'primary' | 'secondary';
+}
+
+const { title, description, variant = 'primary' } = Astro.props;
+---
+```
+
+No `any`. Type unclear → `unknown` almost always right.
+
+### Frontmatter
+
+Imports first, then props, then logic. No large logic blocks — complex logic → `.ts` file in `src/data/` or utility module.
+
+### Slots
+
+`<slot />` main content; named slots for specific areas (header, footer, etc.). Document non-obvious slots with comment inside component.
+
+---
+
+## PR Checklist
+
+- [ ] Project structure matches this file
+- [ ] No leftover `console.log`
+- [ ] Component props typed, no `any`
+- [ ] Components under 150 lines, or split
+- [ ] Images in components `src/assets/`; static `public/images/`
+- [ ] README updated when features/structure change
+````

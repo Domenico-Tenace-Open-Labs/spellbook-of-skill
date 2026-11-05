@@ -1,0 +1,1380 @@
+---
+title: Nuxt Expert
+description: Nuxt 4 and Nuxt 3 conventions, SSR/SSG/hybrid rendering via routeRules, app directory structure, useFetch and useAsyncData, file-based routing, layouts, Nitro server routes and runtimeConfig.
+sidebar:
+  order: 4
+---
+
+## Description
+
+A specialist skill for the Vue meta-framework Nuxt: SSR, SSG, hybrid rendering and the Nitro server. It covers the app directory structure, file-based routing, data fetching with `useFetch` and `useAsyncData`, state, SEO, and build and deploy config, with eight deep references loaded on demand and a strict list of musts and must-nots.
+
+## Guide
+
+1. **Analyze requirements**, pick the render mode per route (SSR, SSG, SPA or hybrid), then consider data needs, auth and SEO.
+2. **Design architecture**, plan the `app/` structure, pages, layouts, composables and Nitro routes.
+3. **Implement**, rely on auto-imports, `useFetch` and `useAsyncData`, and file-based routing.
+4. **Validate**, run `nuxi typecheck` and `nuxt build`, then verify SSR and hydration.
+5. **Optimize**, tune `routeRules` caching and rendering, extract payloads, lazy-hydrate and analyze the bundle.
+6. **Test**, Vitest plus `@nuxt/test-utils`, e2e with Playwright.
+7. **Follow the constraints**, use `useFetch` and `useAsyncData` for server-side data, never fetch initial SSR data in `onMounted`, keep server-only code in `server/`, read config via `useRuntimeConfig()`, and type everything with strict TypeScript.
+
+## Example
+
+Minimal Nuxt 4 `app/pages/users/[id].vue` with SSR-safe data fetching and SEO:
+```vue
+<script setup lang="ts">
+interface User {
+  id: number
+  name: string
+  email: string
+}
+
+const route = useRoute()
+const { data: user, pending, error, refresh } = await useFetch<User>(`/api/users/${route.params.id}`)
+
+useSeoMeta({
+  title: () => `User: ${user.value?.name ?? 'Loading'}`
+})
+</script>
+
+<template>
+  <div>
+    <div v-if="pending">Loading…</div>
+    <div v-else-if="error">{{ error.message }}</div>
+    <div v-else-if="user">
+      <h1>{{ user.name }}</h1>
+      <button @click="refresh">Refresh</button>
+    </div>
+  </div>
+</template>
+```
+
+## Explanation
+
+### Key Concepts
+
+1. **Per-route rendering**, choose SSR, SSG, SPA or hybrid per route with `routeRules`, not one global setting.
+2. **SSR-safe data**, `useFetch` and `useAsyncData` run on the server and reuse the payload, no double fetch.
+3. **Auto-imports over manual imports**, Nuxt provides composables, components and utils.
+4. **Server-only code stays in `server/`**, never import Nitro utilities from client code.
+
+### Best Use Cases
+
+- Building SSR or static sites on Vue 3 with Nuxt.
+- Mixing static marketing pages, prerendered SSR and auth-gated SPA sections in one app.
+- Serving APIs and handling server logic through Nitro.
+
+### Tips to Get the Best Results
+
+- Pair with the Vue skill for Composition API, components and Pinia details.
+- Use `useLazyFetch` or `useLazyAsyncData` when the page must render before data arrives.
+- Add `experimental.typedPages` for type-safe navigation.
+- Keep `runtimeConfig.public` free of secrets, server values belong in the private block.
+
+## Ready-to-use skill
+
+Save the following as `SKILL.md`:
+````markdown
+---
+name: nuxt-expert
+description: Nuxt 4 / Nuxt 3 conventions — SSR/SSG/hybrid rendering via routeRules, app/ directory structure, useFetch/useAsyncData data fetching, file-based routing, layouts, Nitro server routes, runtimeConfig env. Load when the project uses Nuxt (nuxt.config.ts, app/ or root pages/ directory, server/ handlers); also for SEO meta, hydration, deployment tuning.
+---
+
+# Nuxt Expert
+
+Senior Nuxt specialist, Vue.js meta-framework: SSR, SSG, hybrid rendering, Nitro server. *Structure derived from vue-expert skill (MIT).*
+
+> Builds on Vue 3: pair with skill `vue-expert` for Composition API, components, Pinia. Pair with skill `bulma-expert` when project uses Bulma — no duplication.
+
+## Core Workflow
+
+1. **Analyze requirements** - render mode per route (SSR/SSG/SPA/hybrid), data needs, auth, SEO
+2. **Design architecture** - app/ structure, pages, layouts, composables, Nitro routes
+3. **Implement** - auto-imports, `useFetch`/`useAsyncData`, file-based routing
+4. **Validate** - `nuxi typecheck` + `nuxt build`; verify SSR + hydration
+5. **Optimize** - routeRules caching/rendering, payload extraction, lazy hydration, bundle analysis
+6. **Test** - Vitest + `@nuxt/test-utils`; e2e Playwright
+
+## Reference Guide
+
+Load detailed guidance based on context:
+
+| Topic | Reference | Load When |
+|-------|-----------|-----------|
+| Structure & auto-imports | `references/structure.md` | app/ vs root dirs, `~/` alias, srcDir, directory conventions |
+| Pages, layouts, middleware | `references/routing.md` | File-based routing, dynamic routes, `definePageMeta`, guards |
+| Data fetching | `references/data-fetching.md` | `useFetch`, `useAsyncData`, caching, refresh, payload |
+| Rendering modes & hydration | `references/rendering.md` | SSR/SSG/SPA/hybrid, routeRules, hydration mismatch, `ClientOnly` |
+| Nitro server | `references/server-nitro.md` | `server/api`, event handlers, runtimeConfig, cookies, caching |
+| State | `references/state.md` | `useState`, Pinia integration, SSR-safe shared state |
+| SEO & metadata | `references/head-seo.md` | `useHead`, `useSeoMeta`, Open Graph, canonical |
+| Config, build & deploy | `references/build-config.md` | nuxt.config, TypeScript strict, modules, Vite tuning, nitro preset |
+
+## Quick Example
+
+Minimal Nuxt 4 page with SSR-safe data fetching + typed props:
+
+```vue
+<!-- app/pages/users/[id].vue (Nuxt 4) / pages/users/[id].vue (Nuxt 3) -->
+<script setup lang="ts">
+interface User {
+  id: number
+  name: string
+  email: string
+}
+
+const route = useRoute()
+
+// SSR-safe: fetched on server, reused for hydration, deduped by key
+const { data: user, pending, error, refresh } = await useFetch<User>(`/api/users/${route.params.id}`)
+
+useSeoMeta({
+  title: () => `User: ${user.value?.name ?? 'Loading'}`,
+  description: 'User profile page'
+})
+</script>
+
+<template>
+  <div>
+    <div v-if="pending">Loading…</div>
+    <div v-else-if="error">{{ error.message }}</div>
+    <div v-else-if="user">
+      <h1>{{ user.name }}</h1>
+      <a :href="`mailto:${user.email}`">{{ user.email }}</a>
+      <button @click="refresh">Refresh</button>
+    </div>
+  </div>
+</template>
+```
+
+## Constraints
+
+### MUST DO
+
+- `useFetch`/`useAsyncData` for data that must exist on server or survive hydration — never fetch in `onMounted` for initial SSR data
+- Nuxt auto-imports (composables, components, utils) over manual imports from app code
+- Server-only code in `server/` — never import `server/` utils from client code
+- Read config via `useRuntimeConfig()` — not `process.env` at runtime
+- `typescript: { strict: true }`, keep pages/components typed
+- `<ClientOnly>` or hydration strategies for browser-only fragments
+- `definePageMeta()` for per-route layout, middleware, route rules metadata
+
+### MUST NOT DO
+
+- Access `window`/`document` unconditionally in `<script setup>` (SSR runs server-side)
+- Use Vuex — use Pinia or `useState`
+- Put secrets in `runtimeConfig.public`
+- Navigate with `window.location` — use `navigateTo()`/`useRouter()`
+- Register components manually when auto-import covers them
+- Keep pages/components/composables in root for Nuxt 4 project — use `app/` directory
+
+## Output Templates
+
+When implementing Nuxt features, provide:
+
+1. Page + any layout with `definePageMeta()` + typed data fetching
+2. Composable in `app/composables/` when reusable logic exists (auto-imported)
+3. Nitro handler in `server/api/` when endpoint needed
+4. `nuxt.config.ts` snippet for rendering modes, modules, runtimeConfig
+5. Brief explanation of rendering mode + data-fetching decision
+
+## Knowledge Reference
+
+Nuxt 4 / Nuxt 3, SSR/SSG/SPA/hybrid via routeRules, Nitro server, `useFetch`/`useAsyncData`/`useLazyFetch`, file-based routing, layouts, middlewares, `useState`, Pinia, `useHead`/`useSeoMeta`, runtimeConfig, TypeScript strict, Vite integration, module ecosystem, `@nuxt/test-utils`
+````
+
+## Reference files
+
+Save each file below into the skill's `references/` directory.
+
+### structure.md
+
+_Project structure and auto-imports, `~/` alias, directory conventions_
+
+````markdown
+# Nuxt Structure & Auto-imports
+
+## Nuxt 4 Project Structure (default)
+
+```
+my-nuxt-app/
+├── app/                   # App source (Nuxt 4) — Nuxt 3 keeps these at root
+│   ├── app.vue            # Root component
+│   ├── components/        # Auto-imported components
+│   │   ├── AppHeader.vue  # → <AppHeader>
+│   │   └── base/
+│   │       └── Button.vue # → <BaseButton>
+│   ├── composables/       # Auto-imported composables
+│   ├── layouts/           # Layout components
+│   ├── middleware/        # Route middleware
+│   ├── pages/             # File-based routing
+│   ├── plugins/           # App plugins
+│   └── utils/             # Auto-imported utilities
+├── server/                # Nitro server (always at root)
+│   ├── api/               # /api/* endpoints
+│   ├── routes/            # Non-/api routes
+│   ├── middleware/        # Server middleware
+│   ├── utils/             # Server-only utilities
+│   └── plugins/           # Nitro plugins
+├── assets/                # Uncompiled assets (CSS, images)
+├── public/                # Static files (served at /)
+├── content/               # Nuxt Content (if used)
+├── data/                  # Data files for defineAppConfig (optional)
+├── nuxt.config.ts
+├── tsconfig.json
+└── package.json
+```
+
+Nuxt 3 structure identical but `app/` contents at project root (`pages/`, `components/`, etc. under root). Detect layout via `nuxt.config.ts`:
+
+```typescript
+// Nuxt 4 (default: compatibilityVersion 4 or app/ dir exists)
+export default defineNuxtConfig({
+  future: { compatibilityVersion: 4 }
+})
+
+// Nuxt 3 structure (old srcDir behavior)
+export default defineNuxtConfig({
+  srcDir: '.',
+  dir: { app: 'app' }
+})
+```
+
+## `~/` alias
+
+- Nuxt 4: `~` + `@` → `app/` by default → `~/components/Button.vue`
+- Nuxt 3: `~` + `@` → project root → same import path when files at root
+- `~~` and `@@` → project root always
+
+Use `~`/`@`, never relative paths, for app-to-app imports.
+
+## Auto-imports
+
+Nuxt auto-imports (no manual import needed):
+
+| Directory | Auto-imports | Notes |
+|-----------|--------------|-------|
+| `app/composables/` | functions exported | namespaced by folder for multi-file dirs |
+| `app/utils/` | functions exported | same rules |
+| `app/components/` | Vue components | nested dirs → prefix; `~components/` for explicit |
+| `app/pages/`, `app/layouts/`, `app/middleware/` | Nuxt conventions | handled by framework |
+| Nuxt composables | `useState`, `useFetch`, `useRoute`, … | framework-provided |
+| Vue APIs | `ref`, `computed`, `watch`, … (Nuxt ≥3) | default on; disable via `imports.vue: false` |
+
+### Component auto-import rules
+
+```text
+app/components/
+├── AppHeader.vue      → <AppHeader>
+└── base/
+    └── Button.vue     → <BaseButton>   (folder name becomes prefix)
+```
+
+Explicit import via `#components` (e.g. in a plugin):
+
+```typescript
+import { AppHeader } from '#components'
+```
+
+### Composables naming
+
+Auto-imported composables must be called in Nuxt context (setup, plugins, middleware). Name `useXxx`, export function:
+
+```typescript
+// app/composables/useAuth.ts (auto-imported)
+export const useAuth = () => {
+  const user = useState<User | null>('user', () => null)
+  return { user, isLoggedIn: computed(() => user.value !== null) }
+}
+```
+
+## Directory conventions
+
+- **`app/app.vue`** — root component; `<NuxtLayout>` + `<NuxtPage>` via `<NuxtPage />`
+- **`app/pages/`** — file-based routes (see routing)
+- **`app/layouts/`** — `default.vue` applies automatically; others via `definePageMeta({ layout })`
+- **`app/middleware/`** — named middleware; run via `definePageMeta({ middleware })`, `router.options.ts`, or inline `defineNuxtRouteMiddleware` per-file (Nuxt 4 per-file = `definePageMeta({ middleware: 'name' })`)
+- **`server/`** — Nitro handlers, only place for server-only code
+- **`public/`** — static assets served as-is at `/`
+- **`assets/`** — processed by bundler (CSS, images imported in components)
+
+## Config basics
+
+```typescript
+// nuxt.config.ts
+export default defineNuxtConfig({
+  compatibilityVersion: 4,          // Nuxt 4 behavior
+  devtools: { enabled: true },
+  typescript: { strict: true, typeCheck: true },
+  css: ['~/assets/css/main.css'],   // ~/ = app/ in Nuxt 4
+  modules: ['@pinia/nuxt', '@nuxtjs/tailwindcss']
+})
+```
+
+## Quick Reference
+
+| Pattern | Use Case |
+|---------|----------|
+| `app/` (Nuxt 4) or root (Nuxt 3) | Where pages/components/composables live |
+| `server/` | Nitro endpoints + server-only code |
+| `~/` vs `~~/` | app dir vs project root |
+| Auto-imported composables/components/utils | No manual imports needed |
+| `#components` | Explicit component import outside templates |
+| `nuxi init <name>` | Create new Nuxt project |
+````
+### routing.md
+
+_File-based pages, dynamic and catch-all routes, layouts, middleware, error pages_
+
+````markdown
+# Pages, Layouts & Middleware
+
+## File-based Routing
+
+`app/pages/` (Nuxt 4) or `pages/` (Nuxt 3) maps files to routes:
+
+```text
+app/pages/
+├── index.vue            # /
+├── about.vue            # /about
+├── users/
+│   ├── index.vue        # /users
+│   └── [id].vue         # /users/:id
+├── blog/
+│   └── [...slug].vue    # /blog/... (catch-all)
+├── dashboard.vue
+└── admin/
+    └── index.vue        # /admin
+```
+
+Dynamic params via `useRoute()`:
+
+```vue
+<!-- app/pages/users/[id].vue -->
+<script setup lang="ts">
+const route = useRoute()
+const userId = computed(() => route.params.id)
+</script>
+```
+
+Catch-all:
+
+```vue
+<!-- app/pages/blog/[...slug].vue -->
+<script setup lang="ts">
+const route = useRoute()
+const slug = route.params.slug // string[] | string
+</script>
+```
+
+## Page Metadata
+
+```vue
+<script setup lang="ts">
+definePageMeta({
+  title: 'Dashboard',
+  layout: 'dashboard',           // select a layout
+  middleware: 'auth',            // named middleware (string or array)
+  // prefer global `routeRules` in nuxt.config for caching/prerender
+})
+</script>
+```
+
+`definePageMeta` only in `app/pages/`. Statically analyzed — no dynamic values beyond supported options.
+
+## Navigation
+
+```typescript
+const router = useRouter()
+const route = useRoute()
+
+await navigateTo('/users/1')           // server + client safe
+await navigateTo({ path: '/users', query: { page: 2 } })
+await navigateTo('/login', { redirectCode: 301 })
+
+router.push('/about')
+router.replace('/about')
+
+return navigateTo('/login')            // from route middleware — stop execution
+```
+
+Prefer `navigateTo()` (server + client); `router.push` client-only.
+
+## Layouts
+
+```vue
+<!-- app/layouts/default.vue -->
+<template>
+  <div class="app-shell">
+    <header><AppHeader /></header>
+    <main><slot /></main>
+    <footer><AppFooter /></footer>
+  </div>
+</template>
+
+<!-- app/layouts/dashboard.vue -->
+<template>
+  <div class="dashboard">
+    <aside><Navigation /><slot /></aside>
+  </div>
+</template>
+```
+
+Select via `definePageMeta`:
+
+```vue
+<script setup lang="ts">
+definePageMeta({ layout: 'dashboard' })
+</script>
+```
+
+`app.vue` renders active layout + page:
+
+```vue
+<template>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
+</template>
+```
+
+## Route Middleware
+
+Named middleware run before page render:
+
+```typescript
+// app/middleware/auth.ts
+export default defineNuxtRouteMiddleware((to, from) => {
+  const { isLoggedIn } = useAuth()
+  if (!isLoggedIn.value) {
+    return navigateTo('/login')
+  }
+})
+
+// Inline (Nuxt 4) — colocated in app/middleware, named by file
+```
+
+Reference by name:
+
+```vue
+<script setup lang="ts">
+definePageMeta({ middleware: 'auth' })
+</script>
+```
+
+Return values: `navigateTo()` (redirect), `abortNavigation()` (cancel), or nothing (allow).
+
+## Error Pages
+
+```vue
+<!-- app/error.vue -->
+<script setup lang="ts">
+const props = defineProps<{ error: Error & { statusCode: number } }>()
+</script>
+
+<template>
+  <div>
+    <h1>{{ props.error.statusCode }}</h1>
+    <p>{{ props.error.message }}</p>
+  </div>
+</template>
+```
+
+## Type-safe routes (Nuxt 4, experimental)
+
+Typed routes for autocomplete-aware `navigateTo`/`<NuxtLink>`:
+
+```typescript
+// nuxt.config.ts
+export default defineNuxtConfig({
+  experimental: { typedPages: true }
+})
+```
+
+## Quick Reference
+
+| Pattern | Use Case |
+|---------|----------|
+| `app/pages/**/*.vue` | File-based routes |
+| `[id].vue` / `[...slug].vue` | Dynamic / catch-all routes |
+| `definePageMeta()` | Layout, middleware, title |
+| `navigateTo()` | Server+client safe navigation |
+| `app/layouts/default.vue` | Automatic default layout |
+| `definePageMeta({ layout })` | Choose a named layout |
+| `app/middleware/*.ts` | Route guards |
+| `app/error.vue` | Custom error page |
+| `experimental.typedPages` | Type-safe routing |
+````
+### data-fetching.md
+
+_`useFetch`, `useAsyncData`, lazy variants, refresh, caching and payload_
+
+````markdown
+# Data Fetching
+
+Nuxt data fetching SSR-safe by default: fetched on server during SSR, serialized in payload, reused for hydration — no double fetch.
+
+## `useFetch` — recommended default
+
+```vue
+<script setup lang="ts">
+interface User { id: number; name: string; email: string }
+
+// Auto keyed by URL + options, cached, SSR + client safe
+const { data: users, pending, error, refresh, status } = await useFetch<User[]>('/api/users')
+
+// With options
+const { data: page } = await useFetch('/api/items', {
+  method: 'GET',
+  query: { page: 1, limit: 20 },     // serialized into the key
+  headers: {},                        // passed to the request
+  transform: (items: Item[]) => items.map(...),  // transform/pick response
+  pick: ['id', 'title'],
+  watch: [page, limit],               // re-fetch when these change
+  server: true,                       // fetch on server (default true)
+  lazy: false,                        // non-blocking (default false in await form)
+  immediate: true,                    // fetch on mount (default true)
+  key: 'custom-key',                  // manual key (deduping/sharing)
+  dedupe: 'cancel',                   // 'cancel' (default) or 'defer'
+  default: () => [],                  // value while pending
+  getCachedData: (key, nuxtApp, payload) => payload.data,
+  baseURL: '/',                       // relative base for request
+  credentials: 'same-origin'
+})
+</script>
+```
+
+Suspense-friendly: `await useFetch(...)` → navigation waits for fetch. Non-blocking: omit `await`, use `pending`.
+
+## `useAsyncData` — custom handler
+
+```vue
+<script setup lang="ts">
+const { data: user } = await useAsyncData(
+  'user-123',                        // unique key (shared, deduped)
+  () => queryDB.getUser(123),        // any async operation
+  {
+    server: true,
+    lazy: false,
+    default: () => null,
+    transform: (u) => ({ ...u, name: u.name.toUpperCase() })
+  }
+)
+</script>
+```
+
+`useAsyncData` takes any async function/callback — for non-fetch work or wrapping libraries. `useFetch` = `useAsyncData` + `$fetch`.
+
+## Lazy variants (non-blocking)
+
+```vue
+<script setup lang="ts">
+// Does NOT block navigation; data starts null
+const { data: posts, pending } = await useLazyFetch('/api/posts')
+const { data: comments } = await useLazyAsyncData('comments', () => $fetch('/api/comments'))
+</script>
+```
+
+Use `lazy: true` or `useLazy*` when page must render before data (UX: skeletons).
+
+## Manual refresh & revalidation
+
+```vue
+<script setup lang="ts">
+const { data, refresh, status } = await useFetch('/api/items')
+
+async function onFilterChange() {
+  await refresh()                       // refresh the single request
+}
+
+function reloadAll() {
+  refreshNuxtData()                     // all keys
+  refreshNuxtData('items')              // one key
+}
+</script>
+```
+
+`clearNuxtData(keys?)` drops cached data (forces re-fetch on next mount).
+
+## `$fetch` — plain HTTP
+
+`$fetch` (ofetch) for client-side-only calls, event handlers, or where SSR reuse not needed:
+
+```typescript
+const res = await $fetch('/api/users', { method: 'POST', body: { name: 'Ann' } })
+// $fetch throws on 4xx/5xx — catch it:
+try {
+  await $fetch('/api/users/999')
+} catch (err) {
+  // err.data (response body), err.statusCode
+  showToast('User not found')
+}
+```
+
+## Error handling
+
+```vue
+<script setup lang="ts">
+const { data, error } = await useFetch('/api/users')
+
+// useFetch surfaces errors in error.value (does not throw by default)
+if (error.value) {
+  console.error('failed', error.value.statusCode, error.value.statusMessage)
+}
+</script>
+```
+
+Server-side failures that must 404/500 the page: throw `createError` in server handler or check `error.value` after `await useFetch` and `throw createError({ ... })` when SSR.
+
+## Payload extraction
+
+`useFetch` executes server-side and transfers only payload:
+
+```typescript
+// nuxt.config.ts
+export default defineNuxtConfig({
+  payloadExtraction: false, // transfer whole data (disabled by default for SPA-less)
+})
+```
+
+Default: composable data removed from HTML payload unless `payloadExtraction` enabled in production builds. Leave defaults unless measured.
+
+## Caching & deduping
+
+- Requests deduped per key (URL + options default) — concurrent calls share one request
+- Manual `key` shares data across components
+- `getCachedData` + `routeRules` (see rendering) power incremental static rendering
+
+## Quick Reference
+
+| Pattern | Use Case |
+|---------|----------|
+| `useFetch(url, opts)` | SSR-safe fetching, keyed by URL |
+| `useAsyncData(key, fn, opts)` | Any async data with custom key |
+| `useLazyFetch` / `useLazyAsyncData` | Non-blocking data (skeleton UX) |
+| `refresh()` | Re-run one composable |
+| `refreshNuxtData(key?)` | Re-run all / one key |
+| `clearNuxtData(key?)` | Drop cached payloads |
+| `$fetch` | Plain HTTP, client-side calls, server handlers |
+| `error.value` | Non-throwing fetch errors |
+````
+### rendering.md
+
+_SSR, SSG, SPA and hybrid via `routeRules`, hydration best practices_
+
+````markdown
+# Rendering Modes & Hydration
+
+Nuxt decouples client/server rendering per route via `routeRules`. Choose mode per route instead of one global setting.
+
+## Rendering modes
+
+| Mode | Setup | Use Case |
+|------|-------|----------|
+| **Universal (SSR)** | default | Dynamic content, personalized pages, SEO-critical with data |
+| **SSG (prerendered)** | `routeRules: { '/**': { prerender: true } }` or `nitro.prerender` | Marketing pages, blogs, docs |
+| **SPA (client)** | `routeRules: { '/app/**': { ssr: false } }` | Protected dashboards, auth-gated apps |
+| **Hybrid** | per-route `routeRules` | Mix of the above in one app |
+
+```typescript
+// nuxt.config.ts
+export default defineNuxtConfig({
+  routeRules: {
+    '/': { prerender: true },                     // SSG homepage
+    '/blog/**': { swr: 3600 },                    // stale-while-revalidate, 1h
+    '/app/**': { ssr: false },                    // SPA section
+    '/admin/**': { redirect: '/login' },          // redirect
+    '/old': { redirect: { to: '/new', statusCode: 301 } },
+    '/api/legacy/**': { proxy: 'https://api.legacy.com/**' }, // BFF proxy
+    '/privacy': { prerender: true, headers: { 'Cache-Control': 'max-age=31536000, immutable' } }
+  }
+})
+```
+
+`swr`/`prerender` only used with node server or edge provider supporting Nitro caching (Vercel, Netlify, Cloudflare, AWS Lambda).
+
+### Route rule conflict resolution
+
+More specific (larger) patterns win; `ssr: false` and `swr`/`prerender` mutually exclusive per route. Keep rules same specificity; add `app: { pageTransition }` etc. only where intended.
+
+## Server-side rendering (SSR)
+
+```typescript
+// nuxt.config.ts
+export default defineNuxtConfig({
+  ssr: true, // default; false → pure SPA
+})
+```
+
+Behavior:
+
+- First request server-renders: HTML + serialized payload (`__NUXT_DATA__`)
+- Client hydrates and takes over
+- Data via `useFetch`/`useAsyncData` reused — no double fetch when keys match
+
+## SSG / prerendering
+
+```typescript
+// nuxt.config.ts
+export default defineNuxtConfig({
+  nitro: {
+    prerender: { routes: ['/', '/about', '/sitemap.xml'] }
+  }
+})
+```
+
+Prerendered routes ship fully-static HTML — deploy to any static host. Dynamic pages use `getCachedKeys`/callbacks at build time or fall back to SWR at edge.
+
+## Hydration best practices
+
+### Hydration mismatch prevention
+
+```vue
+<script setup lang="ts">
+// Browser-only value must not render on server
+const now = ref<string | null>(null)
+onMounted(() => { now.value = new Date().toLocaleString() })
+</script>
+
+<template>
+  <!-- v-if guards server/HTML vs client-safe value -->
+  <span v-if="now">{{ now }}</span>
+  <span v-else>—</span>
+</template>
+```
+
+Root cause of mismatch: output differs between server HTML and first client render. Defer browser-only values to `onMounted` (or `useId`/`v-if`).
+
+### Client-only components
+
+```vue
+<script setup lang="ts">
+const HeavyChart = defineAsyncComponent(() => import('~/components/HeavyChart.vue'))
+</script>
+
+<template>
+  <ClientOnly fallback-tag="span" fallback="Loading chart…">
+    <HeavyChart />
+  </ClientOnly>
+</template>
+```
+
+`<ClientOnly>` renders nothing (or fallback) server-side, mounts on client.
+
+### Laggy/lazy hydration
+
+```vue
+<script setup lang="ts">
+definePageMeta({ hydration: 'when-visible' }) // Nuxt 4 experimental hydration strategy
+</script>
+<template>
+  <LazyBelowFoldContent /> <!-- <Lazy*> prefixed import → hydration deferral -->
+</template>
+```
+
+## Code splitting & loading
+
+- Nuxt auto-split per route (lazy-loaded pages)
+- `<LazyComponent>` alone does client-side deferral
+- `defineAsyncComponent` for manual `import()` control
+- Rarely use `experimental.pages.bypass`-style options; prefer defaults
+
+## Quick Reference
+
+| Pattern | Use Case |
+|---------|----------|
+| `routeRules['/path'].prerender` | SSG for a route |
+| `routeRules['/path'].swr: 3600` | Revalidate at most hourly, serve cached |
+| `routeRules['/path'].ssr: false` | SPA section |
+| `routeRules` `redirect`, `proxy`, `headers` | Edge behaviors in one config |
+| `ssr: false` | Whole app as SPA |
+| `<ClientOnly>` | Browser-only fragments |
+| `onMounted` + guard | Prevent hydration mismatch |
+| `<Lazy*>` / `defineAsyncComponent` | Defer non-critical code |
+````
+### server-nitro.md
+
+_Nitro `server/` handlers, runtimeConfig, middleware, caching, WebSockets_
+
+````markdown
+# Nitro Server
+
+Nitro powers `server/` — API endpoints, middleware, scheduled tasks, deployment presets. Code here server-only, never ships to client.
+
+## Project structure
+
+```text
+server/
+├── api/           # /api/* endpoints (auth.api.ts → /api/auth)
+│   ├── users.get.ts
+│   ├── users/[id].get.ts
+│   └── users.post.ts
+├── routes/        # non-/api endpoints (/health)
+├── middleware/    # server middleware (runs before handlers)
+├── utils/         # auto-imported server helpers (import from '~server/utils/...')
+├── plugins/       # Nitro lifecycle hooks
+└── tasks/         # scheduled/queued tasks
+```
+
+Handlers auto-registered by filename (`[name].[method].ts`, `[name].get.ts`, …). Same path, multiple methods → `users.get.ts` + `users.post.ts`.
+
+## Event handlers
+
+```typescript
+// server/api/users.get.ts
+export default defineEventHandler(async (event) => {
+  const query = getQuery(event)                 // { page?: string, limit?: string }
+  const users = await db.users.findMany({ ... })
+  return users                                  // auto-serialized JSON
+})
+
+// server/api/users/[id].get.ts
+export default defineEventHandler(async (event) => {
+  const id = getRouterParam(event, 'id')        // route param
+  const user = await db.users.findUnique({ where: { id: Number(id) } })
+  if (!user) {
+    throw createError({ statusCode: 404, statusMessage: 'User not found' })
+  }
+  return user
+})
+
+// server/api/users.post.ts
+export default defineEventHandler(async (event) => {
+  const body = await readBody(event)            // parsed body
+  const created = await db.users.create({ data: body })
+  setResponseStatus(event, 201)
+  return created
+})
+```
+
+## Request helpers
+
+```typescript
+const query = getQuery(event)                                   // GET query
+const params = getRouterParam(event, 'name')                    // route params
+const body = await readBody(event)                              // POST body
+const cookie = getCookie(event, 'session')                      // cookies
+const headers = getHeaders(event)                               // request headers
+const host = getRequestHost(event)                              // host
+const url = getRequestURL(event)                                // full URL
+```
+
+## Responses
+
+```typescript
+return createError({ statusCode: 400, statusMessage: 'Bad request', data: { field: 'email' } })
+sendRedirect(event, '/new', 302)
+event.node.res.statusCode // low-level escape hatch (avoid unless needed)
+```
+
+Never disclose internal details in errors; keep user-facing messages safe.
+
+## Runtime config (env access)
+
+```typescript
+// nuxt.config.ts
+export default defineNuxtConfig({
+  runtimeConfig: {
+    // Server-side only — never sent to client
+    apiSecret: process.env.API_SECRET,
+    // Public — exposed to client via NUXT_PUBLIC_*
+    public: { apiBase: '/api' }
+  }
+})
+```
+
+```typescript
+// In handlers & composables
+const config = useRuntimeConfig()
+config.apiSecret        // server-only (undefined on client)
+config.public.apiBase   // everywhere
+```
+
+Env overrides: `NUXT_API_SECRET=...`, `NUXT_PUBLIC_API_BASE=...` — prefer env vars over committing secrets.
+
+## Server middleware
+
+```typescript
+// server/middleware/log.ts — runs before every request
+export default defineEventHandler((event) => {
+  console.log(`[${event.method}] ${event.path}`)
+})
+```
+
+## Server plugins (lifecycle)
+
+```typescript
+// server/plugins/db.ts
+export default defineNitroPlugin((nitroApp) => {
+  nitroApp.hooks.hook('request', (event) => { /* per request */ })
+  nitroApp.hooks.hook('error', (error, event) => { logError(error) })
+})
+```
+
+## Caching & performance
+
+```typescript
+// server/api/slow.get.ts
+export default defineCachedEventHandler(
+  async (event) => { return await expensiveCompute() },
+  { maxAge: 60 * 5, swr: true, name: 'slow-result' }
+)
+
+// setCacheHeaders() for edge caching via routeRules instead
+```
+
+## WebSockets & events
+
+```typescript
+// server/api/ws.ts (Nuxt 4 / Nitro supports fresh/WebSockets)
+export default defineWebSocketHandler({
+  open(peer) { peer.send('connected') },
+  message(peer, message) { peer.send(message.text()) }
+})
+```
+
+## Error handling
+
+```typescript
+// Global error hook in server/plugins
+export default defineNitroPlugin((nitroApp) => {
+  nitroApp.hooks.hook('error', (error, event) => {
+    // correlate via event.path, event.headers.…; never log secrets/PII
+    captureError(error)
+  })
+})
+```
+
+## Quick Reference
+
+| Pattern | Use Case |
+|---------|----------|
+| `server/api/**` | REST endpoints |
+| `server/routes/**` | Non-/api paths |
+| `defineEventHandler` | Handler signature |
+| `getQuery` / `readBody` / `getRouterParam` | Input access |
+| `createError` / `sendRedirect` | Responses & errors |
+| `useRuntimeConfig()` | Env/secret access |
+| `server/middleware/*` | Pre-handler logic |
+| `defineCachedEventHandler` | Response caching |
+| `defineWebSocketHandler` | WS endpoints |
+````
+### state.md
+
+_`useState`, Pinia with Nuxt, cookies and SSR-safe shared state_
+
+````markdown
+# State Management
+
+Nuxt provides two SSR-safe state mechanisms: `useState` (built-in, small shared state) + Pinia via `@pinia/nuxt` (structured stores).
+
+## `useState` — SSR-safe shared state
+
+`useState` with same key shares state across components, serialized into payload on server → hydration-safe (no mismatch):
+
+```vue
+<script setup lang="ts">
+const counter = useState<number>('counter', () => 0)
+const user = useState(() => null) // key auto-derived — prefer explicit key
+
+function increment() { counter.value++ }
+</script>
+<template>
+  <button @click="increment">Count: {{ counter }}</button>
+</template>
+```
+
+Rules:
+
+- `useState` in setup/plugins/middleware (Nuxt context) only
+- Prefer **composable** wrapping `useState` so key lives in one place:
+
+```typescript
+// app/composables/useCart.ts (auto-imported)
+export const useCart = () => {
+  const items = useState<CartItem[]>('cart', () => [])
+  const total = computed(() => items.value.reduce((s, i) => s + i.price * i.qty, 0))
+  function add(item: CartItem) { items.value.push(item) }
+  return { items, total, add }
+}
+```
+
+- No non-serializable values in `useState` (functions, class instances, complex objects)
+- Structured/global domain state (auth, cart, settings across many components) → Pinia
+
+## Pinia with Nuxt
+
+```bash
+pnpm add pinia @pinia/nuxt
+```
+
+```typescript
+// nuxt.config.ts
+export default defineNuxtConfig({
+  modules: ['@pinia/nuxt']   // auto-installed Pinia instance
+})
+```
+
+Setup-style store (recommended, Composition API):
+
+```typescript
+// app/stores/user.ts (auto-imported via @pinia/nuxt)
+export const useUserStore = defineStore('user', () => {
+  const user = ref<User | null>(null)
+  const isLoggedIn = computed(() => user.value !== null)
+
+  async function login(email: string, password: string) {
+    const { data, error } = await useFetch('/api/auth/login', { method: 'POST', body: { email, password } })
+    if (data.value) user.value = data.value.user
+    return !!data.value
+  }
+  function logout() { user.value = null }
+
+  return { user, isLoggedIn, login, logout }
+})
+```
+
+Use in components (no `storeToRefs` needed for setup stores—destructure refs directly, keep reactivity):
+
+```vue
+<script setup lang="ts">
+const store = useUserStore()
+const { user, isLoggedIn } = storeToRefs(store) // keep reactivity when destructuring
+const { login, logout } = store                 // actions are plain functions
+</script>
+```
+
+## SSR + Pinia pitfalls
+
+- Don't seed `useState`-backed stores from `onMounted` only — initial data must be set during SSR to avoid hydration mismatch
+- Guard async store actions against double-run: Nuxt dedupes `useFetch` per key; call store actions inside `await useAsyncData` for server-rendered data:
+
+```typescript
+// app/pages/dashboard.vue
+const store = useUserStore()
+await useAsyncData('dashboard-data', () => store.fetchDashboard()) // SSR-safe, deduped
+```
+
+- Pinia devtools work out of the box; enable `devtools` in nuxt.config
+
+## Cookies & client-only state
+
+```typescript
+// SSR-safe cookie access
+const token = useCookie('token')            // auto-refreshed each request
+const theme = useCookie('theme', { maxAge: 60 * 60 * 24 * 365 })
+```
+
+Use `useCookie` for per-visitor persistent state (session, theme, locale) instead of `localStorage` (not on server → hydration mismatch).
+
+## Persistence
+
+Nuxt-friendly Pinia persistence: `pinia-plugin-persistedstate` (mount in Nuxt plugin or via `@pinia/nuxt`). Prefer cookies for cross-request values SSR reads.
+
+## Quick Reference
+
+| Pattern | Use Case |
+|---------|----------|
+| `useState(key, init)` | Small SSR-safe shared state |
+| `useState` in a composable | One source of truth per key |
+| Pinia + `@pinia/nuxt` | Structured global stores |
+| Setup stores | Recommended Pinia style |
+| `storeToRefs()` | Reactive destructuring |
+| `useCookie()` | SSR-safe visitor state |
+| Pinia + `useAsyncData` | SSR-seeded store data |
+````
+### head-seo.md
+
+_`useHead`, `useSeoMeta`, JSON-LD, sitemap and robots_
+
+````markdown
+# SEO & Metadata
+
+Nuxt provides framework-level head management via Unhead — composables for title, meta, Open Graph, JSON-LD, canonical URLs, all SSR-rendered.
+
+## Static site metadata (nuxt.config)
+
+```typescript
+// nuxt.config.ts
+export default defineNuxtConfig({
+  app: {
+    head: {
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
+      title: 'My App',
+      meta: [
+        { name: 'description', content: 'Short site description' },
+        { name: 'theme-color', content: '#06b6d4' }
+      ],
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'canonical', href: 'https://example.com/' }
+      ]
+    }
+  }
+})
+```
+
+Global defaults here; per-page values via composables (below) override.
+
+## Per-page head (in pages)
+
+```vue
+<script setup lang="ts">
+// useHead — full control
+useHead({
+  title: 'About — My App',
+  meta: [
+    { name: 'description', content: 'About this site' }
+  ]
+})
+
+// useSeoMeta — focused SEO helper (kebab-case props)
+useSeoMeta({
+  title: 'About Us',
+  description: 'Company page',
+  ogTitle: 'About Us',
+  ogDescription: 'Company page',
+  ogType: 'website',
+  ogImage: '/images/og-about.png',   // absolute URLs preferred
+  twitterCard: 'summary_large_image',
+  canonical: 'https://example.com/about'
+})
+</script>
+```
+
+Reactivity: pass getters (functions returning values) for reactive titles:
+
+```vue
+<script setup lang="ts">
+const page = ref(1)
+useSeoMeta({
+  title: () => `Products — page ${page.value}`
+})
+</script>
+```
+
+## Dynamic route pages (title from data)
+
+```vue
+<script setup lang="ts">
+const route = useRoute()
+const { data: post } = await useFetch(`/api/posts/${route.params.slug}`)
+
+useHead(() => ({
+  title: `${post.value?.title ?? 'Post'} — Blog`,
+  meta: [
+    { name: 'description', content: post.value?.excerpt?.slice(0, 155) }
+  ]
+}))
+</script>
+```
+
+## Structured data (JSON-LD)
+
+```vue
+<script setup lang="ts">
+useHead({
+  script: [
+    {
+      type: 'application/ld+json',
+      children: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: 'My post',
+        datePublished: '2026-01-01',
+        author: { '@type': 'Person', name: 'Ann' }
+      })
+    }
+  ]
+})
+</script>
+```
+
+## Open Graph images & social preview
+
+- Use absolute URLs (`https://domain/path/og.png`) — crawlers ignore relative paths
+- Dynamic previews: `nuxt-og-image` for per-page OG images
+- Add `<meta name="robots">` only to block indexing (`noindex`); otherwise omit (crawlers default to index)
+
+## Sitemap & robots
+
+```bash
+pnpm add @nuxtjs/sitemap
+```
+
+```typescript
+// nuxt.config.ts
+export default defineNuxtConfig({
+  modules: ['@nuxtjs/sitemap'],
+  site: { url: 'https://example.com' },   // sitemap + og base
+  sitemap: {
+    exclude: ['/admin/**'],
+    defaults: { changefreq: 'weekly', priority: 0.8 }
+  }
+})
+// /robots.txt generated automatically when sitemap module + site.url set
+```
+
+## Canonical management
+
+- Default canonical in `app.head`, override per-page with `canonical`
+- Strip query params unless they change content; self-referencing canonical on paginated pages
+- Moved routes: `navigateTo(..., { redirectCode: 301 })` (see routing)
+
+## SSR vs client-only SEO
+
+- All `useHead`/`useSeoMeta` output renders in HTML (SSR) — crawlers get full metadata
+- SPA-only routes (`ssr: false`): keep meta + content server-rendered where SEO matters (`routeRules` prerender/ssr, see rendering)
+
+## Quick Reference
+
+| Pattern | Use Case |
+|---------|----------|
+| `app.head` in nuxt.config | Global defaults |
+| `useHead({...})` | Full head control |
+| `useSeoMeta({...})` | Focused SEO helper |
+| getters in composables | Reactive title/meta |
+| JSON-LD via `useHead` script | Structured data |
+| `@nuxtjs/sitemap` | sitemap.xml + robots.txt |
+| Route-level SEO via routeRules | Prerender/SSR where SEO matters |
+````
+### build-config.md
+
+_`nuxt.config` defaults, TypeScript, modules, build and deploy presets_
+
+````markdown
+# Config, Build & Deploy
+
+## `nuxt.config.ts` — sane defaults
+
+```typescript
+// nuxt.config.ts
+export default defineNuxtConfig({
+  // Nuxt version behavior — 3 vs 4 (see structure reference)
+  compatibilityVersion: 4,           // Nuxt 4 defaults (or future: {...})
+
+  devtools: { enabled: true },
+
+  // TypeScript — strict, checked at build
+  typescript: {
+    strict: true,
+    typeCheck: true                   // runs vue-tsc on build (slower but safer)
+  },
+
+  // Modules (ecosystem — pinia, sitemap, tailwind, content…)
+  modules: ['@pinia/nuxt', '@nuxtjs/sitemap'],
+
+  // Global CSS (processed by Vite)
+  css: ['~/assets/css/main.css'],
+
+  // Rendering per route (SSR/SSG/SPA/hybrid) — see rendering reference
+  routeRules: {
+    '/': { prerender: true },
+    '/blog/**': { swr: 3600 }
+  },
+
+  // Runtime env access (never secrets in public)
+  runtimeConfig: {
+    apiSecret: process.env.API_SECRET,
+    public: { apiBase: '/api' }
+  },
+
+  // Vite bundler config
+  vite: {
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: { 'vendor': ['vue', 'pinia'] }
+        }
+      }
+    }
+  },
+
+  // Nitro server engine
+  nitro: {
+    preset: 'node-server'            // or vercel, netlify, cloudflare-pages…
+  }
+})
+```
+
+## TypeScript
+
+- `nuxi typecheck` validates types (requires `typescript` package)
+- Auto `tsconfig` extends; keep `strict: true`
+- Typed pages (experimental): `experimental: { typedPages: true }` — type-safe routes
+- Server handler types: `defineEventHandler(async (event) => …)` fully inferred
+
+## Modules ecosystem (principali)
+
+| Module | Purpose |
+|--------|---------|
+| `@pinia/nuxt` | Pinia store integration |
+| `@nuxtjs/tailwindcss` | Tailwind |
+| `@nuxtjs/sitemap` | sitemap.xml + robots.txt |
+| `@nuxt/content` | Content/markdown-driven sites |
+| `@nuxtjs/i18n` | Internationalization (routing + SEO) |
+| `@nuxt/image` | Optimized `<NuxtImg>` |
+| `nuxt-auth-utils` | Session auth (H3-based) |
+| `@nuxt/test-utils` | Vitest + e2e helpers |
+
+Install via pnpm (project convention — never npm/yarn). Configure in `modules` array; check each module's docs for runtime adds.
+
+## Environment variables
+
+- `.env` → loaded automatically (`NUXT_PUBLIC_*` public, `NUXT_*` runtimeConfig)
+- Never commit `.env`; never hardcode per-environment config outside env files
+- Validate required env at startup (config validated at startup)
+
+```typescript
+// app/plugins/validate-env.ts
+export default defineNuxtPlugin(() => {
+  const config = useRuntimeConfig()
+  if (!config.public.apiBase) throw new Error('NUXT_PUBLIC_API_BASE is required')
+})
+```
+
+## Build & verify
+
+```bash
+pnpm nuxt typecheck     # type check (vue-tsc)
+pnpm nuxt build         # production build (Nitro — .output/)
+pnpm nuxt dev           # dev server
+pnpm nuxt analyze       # bundle analysis (nuxi analyze)
+```
+
+Before wrap-up (project convention): `nuxi typecheck` + `nuxt build` pass, no leftover `console.log`.
+
+## Build optimization
+
+- Route-based code splitting automatic; lazy-load heavy components (`<Lazy*>` / `defineAsyncComponent`)
+- Manual chunks only after measuring — defaults usually fine
+- `nitro.prerender` static routes; `routeRules.swr` caching dynamic routes at edge
+- `nuxi analyze` before optimizing bundles
+
+## Deployment
+
+| Target | `nitro.preset` |
+|--------|----------------|
+| Node server / VPS | `node-server` |
+| Vercel | `vercel` |
+| Netlify | `netlify` |
+| Cloudflare Pages | `cloudflare-pages` |
+| AWS Lambda / ElastiCache | `aws-lambda`, `aws-amplify` |
+| Static host (SSG only) | `static` (or `nitro.prerender` + static preset) |
+
+Modern targets (serverless/edge with SWR caching): `vercel`, `netlify`, `cloudflare-pages` support incremental rendering via routeRules. Node server: set `compatibilityDate`/deploy `.output/server` with process manager (systemd, pm2) + proxy (Caddy, nginx).
+
+## Quick Reference
+
+| Pattern | Use Case |
+|---------|----------|
+| `modules: []` | Add ecosystem features |
+| `runtimeConfig` + `NUXT_*` | Env access, no hardcoded secrets |
+| `typescript: { strict, typeCheck }` | Build-time type safety |
+| `routeRules` | Per-route rendering/caching |
+| `nitro.preset` | Deployment target |
+| `pnpm nuxt build` | Production build |
+| `nuxi analyze` | Bundle analysis |
+````

@@ -13,8 +13,11 @@ Before adding a new one, make sure the topic is not already covered in the docum
 Add the new guide to one of the folders under src/content/docs, for example:
 
 - Start Here
-- Coding
+- Code Quality
 - Content Creation
+- Frameworks
+- Frontend
+- Project Maintenance
 
 If the guide belongs to a new area, you can create a new folder with a clear and descriptive name.
 
